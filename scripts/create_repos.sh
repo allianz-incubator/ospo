@@ -5,17 +5,9 @@ IFS=$'\n' # keep whitespace when iterating with for loops
 
 echo "start"
  
-gh repo create allianz/action-test --public
-
+    gh repo list allianz --json name --limit 1000 | jq -r '.[].name' | sort
 echo "--------------------------"
-
-gh api \
-           --method POST \
-           -H "Accept: application/vnd.github+json" \
-           -H "X-GitHub-Api-Version: 2022-11-28" \
-            /orgs/allianz/teams \
-           -f name="bbbb"
-
+    gh repo list allianz-incubator --json name --limit 1000 | jq -r '.[].name' | sort
 echo "done"
 
 exit 1
