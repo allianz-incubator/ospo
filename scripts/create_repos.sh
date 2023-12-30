@@ -4,12 +4,18 @@ IFS=$'\n' # keep whitespace when iterating with for loops
 
 
 echo "start"
+ 
+gh repo create allianz-incubator/action-test --public
+
+echo "--------------------------"
+
 gh api \
-        --method POST \
-        -H "Accept: application/vnd.github+json" \
-        -H "X-GitHub-Api-Version: 2022-11-28" \
-        repos/allianz-incubator/playground/transfer \
-        -f new_owner=allianz
+           --method POST \
+           -H "Accept: application/vnd.github+json" \
+           -H "X-GitHub-Api-Version: 2022-11-28" \
+            /orgs/allianz-incubator/teams \
+           -f name="bbbb"
+
 echo "done"
 
 exit 1
