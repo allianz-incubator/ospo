@@ -8,18 +8,18 @@ echo "start"
 
     
 echo "--------------------------"
-gh api -XGET \
+ad=$(gh api -XGET \
     -H "Accept: application/vnd.github+json" \
     -H "X-GitHub-Api-Version: 2022-11-28" \
-    -F q="Allianz OSPO" /orgs/allianz-incubator/team-sync/groups
+    -F q="Allianz OSPO" /orgs/allianz-incubator/team-sync/groups)
 echo "--------------------------"
 
-gh api \
-            --method PUT \
-            -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            /orgs/allianz-incubator/teams/asdf/repos/allianz-incubator/test-permissions \
-            -f permission='push'
+echo $ad | gh api \
+          --method PATCH   \
+          -H "Accept: application/vnd.github+json" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          /orgs/allianz-incubator/teams/asdf/team-sync/group-mappings \
+          --input -
     
 echo "done"
 
