@@ -3,6 +3,15 @@ cd "$(dirname "$0")"
 IFS=$'\n' # keep whitespace when iterating with for loops
 
 
+echo "start"
+gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /orgs/allianz/teams
+echo "---------------------------------"
+
+gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /orgs/allianz-incubator/teams
+echo "done"
+
+exit 1
+
 YAML_FILE="../config/repos.yaml"
 
 # Install yq and gh (if not already installed)
@@ -52,7 +61,7 @@ validate_config() {
     # Validate stages
     for stage in $(yq eval '.repositories[].stage' "$YAML_FILE"); do
         if [[ "$stage" != "allianz" && "$stage" != "allianz-incubator" ]]; then
-            echo "Invalid stage: $stage"
+            echo "Invalid stage: $stage."
             exit 1
         fi
     done
