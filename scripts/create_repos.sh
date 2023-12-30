@@ -4,10 +4,12 @@ IFS=$'\n' # keep whitespace when iterating with for loops
 
 
 echo "start"
-gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /orgs/allianz/teams
-echo "---------------------------------"
-
-gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /orgs/allianz-incubator/teams
+gh api \
+        --method POST \
+        -H "Accept: application/vnd.github+json" \
+        -H "X-GitHub-Api-Version: 2022-11-28" \
+        repos/allianz-incubator/playground/transfer \
+        -f new_owner=allianz
 echo "done"
 
 exit 1
