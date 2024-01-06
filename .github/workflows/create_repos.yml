@@ -23,7 +23,8 @@ jobs:
         env:
           GH_TOKEN: ${{secrets.TOKEN}}
         run: |
-          echo "out=$(echo "test_output")" >> $GITHUB_OUTPUT
+          res=$(scripts/create_repos.sh)
+          echo "out=$(echo "$res")" >> $GITHUB_OUTPUT
         # echo "::set-env name=RESULT::Hello World"
         # echo "out=$(scripts/create_repos.sh)" >> $GITHUB_OUTPUT
         #run: scripts/create_repos.sh  >> "$GITHUB_OUTPUT"
