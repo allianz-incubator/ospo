@@ -22,8 +22,9 @@ jobs:
         id: plan
         env:
           GH_TOKEN: ${{secrets.TOKEN}}
-          RESULT: ${{ steps.plan.outputs.result }}
-        run: echo "hello world"
+        run: |
+          echo "Hello World" 
+          echo "::set-env name=RESULT::Hello World"
         #run: scripts/create_repos.sh  >> "$GITHUB_OUTPUT"
           
 
