@@ -35,12 +35,10 @@ jobs:
               const fs = require('fs');
               const outputFilePath = 'result.txt';
               const fileContent = fs.readFileSync(outputFilePath, 'utf-8');
-              const prefix = 'Prefix text```';
-              const suffix = '```Suffix text';
+              const prefix = 'Prefix text```\n';
+              const suffix = '\n```Suffix text';
               const output = `${prefix}${fileContent}${suffix}`;
-              
-              // Rest of your GitHub Action script remains unchanged
-              const context = github.context;
+    
               const octokit = new github.GitHub(process.env.GITHUB_TOKEN);
               octokit.issues.createComment({
                 owner: context.repo.owner,
