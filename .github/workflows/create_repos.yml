@@ -24,8 +24,8 @@ jobs:
           GH_TOKEN: ${{secrets.TOKEN}}
         run: |
           res=$(scripts/create_repos.sh)
-          echo $res
-          echo -e "out=Planned Changes of the IaC Code\n\n$(echo $res)\n" >> $GITHUB_OUTPUT
+          echo -e $res
+          echo "out=$(echo $res)\n" >> $GITHUB_OUTPUT
           
 
       - name: Test output
@@ -35,7 +35,7 @@ jobs:
         uses: actions/github-script@v5
         if: github.event_name == 'pull_request'
         env:
-          PLAN: "${{ steps.plan.outputs.out }}"
+          PLAN: "Output of IaC\n ```\n ${{ steps.plan.outputs.out }} \n```\n"
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
