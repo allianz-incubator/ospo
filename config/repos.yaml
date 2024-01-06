@@ -24,3 +24,5 @@ repositories:
  
   - name: "playground"
     stage: allianz-incubator
+    teams:
+    - name: "Allianz OSPO"
