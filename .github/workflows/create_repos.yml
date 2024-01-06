@@ -22,7 +22,7 @@ jobs:
         id: plan
         env:
           GH_TOKEN: ${{secrets.TOKEN}}
-        run: scripts/create_repos.sh 
+        run: scripts/create_repos.sh  >> "$GITHUB_OUTPUT"
 
       - name: Add output to PR comment
         uses: actions/github-script@v5
