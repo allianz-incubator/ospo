@@ -23,28 +23,31 @@ jobs:
         env:
           GH_TOKEN: ${{secrets.TOKEN}}
         run: |
-          res=$(scripts/create_repos.sh)
-          echo -e $res
-          echo "out=$(echo $res)\n" >> $GITHUB_OUTPUT
+          scripts/create_repos.sh >> result.txt
+          cat result.txt
           
-
-      - name: Test output
-        run: echo "The output is ${{ steps.plan.outputs.out }}"
-
       - name: Add output to PR comment
         uses: actions/github-script@v5
         if: github.event_name == 'pull_request'
-        env:
-          PLAN: "Output of IaC\n ```\n ${{ steps.plan.outputs.out }} \n```\n"
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: process.env['PLAN']
-            })
+              const fs = require('fs');
+              const outputFilePath = 'result.txt';
+              const fileContent = fs.readFileSync(outputFilePath, 'utf-8');
+              const prefix = 'Prefix text```';
+              const suffix = '```Suffix text';
+              const output = `${prefix}${fileContent}${suffix}`;
+              
+              // Rest of your GitHub Action script remains unchanged
+              const context = github.context;
+              const octokit = new github.GitHub(process.env.GITHUB_TOKEN);
+              octokit.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: `Repository creation output:\n${output}`,
+              });
 
   apply:
     needs: dry-run
