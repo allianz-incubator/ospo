@@ -25,7 +25,7 @@ jobs:
         run: |
           res=$(scripts/create_repos.sh)
           echo $res
-          echo "out=Planned Changes of the IaC Code\n\n$(echo $res)\n" >> $GITHUB_OUTPUT
+          echo -e "out=Planned Changes of the IaC Code\n\n$(echo $res)\n" >> $GITHUB_OUTPUT
           
 
       - name: Test output
