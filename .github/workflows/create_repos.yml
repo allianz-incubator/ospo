@@ -22,7 +22,11 @@ jobs:
         id: plan
         env:
           GH_TOKEN: ${{secrets.TOKEN}}
-        run: scripts/create_repos.sh  >> "$GITHUB_OUTPUT"
+        run: echo "hello world" >> "$GITHUB_OUTPUT"
+        #run: scripts/create_repos.sh  >> "$GITHUB_OUTPUT"
+
+      - name: Test output
+        run: echo ${{ steps.plan.outputs.stdout }}
 
       - name: Add output to PR comment
         uses: actions/github-script@v5
