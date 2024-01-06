@@ -38,12 +38,11 @@ jobs:
               const prefix = 'Prefix text```\n';
               const suffix = '\n```Suffix text';
               const output = `${prefix}${fileContent}${suffix}`;
-    
-              const octokit = new github.GitHub(process.env.GITHUB_TOKEN);
-              octokit.issues.createComment({
+          
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: context.issue.number,
                 body: `Repository creation output:\n${output}`,
               });
 
