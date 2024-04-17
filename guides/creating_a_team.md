@@ -11,3 +11,5 @@ To create a new GitHub team and assign it to one or more repositories, follow th
 2. Modify the configuration file [repos.yaml](../config/repos.yaml) to include the desired assignments. You can either submit a pull request with the changes, or if you prefer, create a ticket outlining your desired modifications, and we will handle the pull request on your behalf.
 
 After the Github Team is created, users that want to join can order the GIAM group. Detailed instructions on joining a team can be found [here](joining_a_team.md).
+
+For those who created the GIAM group, it's important to note that they must also order the group themselves. The ordering process for creators differs from the standard procedure and is detailed [here](https://allianzms.sharepoint.com/:u:/r/teams/DE1214-6256295/SitePages/Order-own-GIAM-group.aspx?csf=1&web=1&e=DF2jNc).
