@@ -1,7 +1,7 @@
 # Graduation from Incubator
 
 ## Purpose of Incubator
-The Incubator at Allianz serves as a space for early-stage projects, where incomplete functionality, documentation, or missing processes are accepted and considered to be part of the setup process.
+The [Incubator](https://github.com/allianz-incubator) at Allianz serves as a space for early-stage projects and is typically where new projects begin. Incomplete functionality, documentation gaps, or missing processes are accepted and considered part of the setup process.
 
 ## Graduation Readiness Checks
 If you believe your project is ready for prime time, please check the following key criteria:
