@@ -15,7 +15,7 @@ After this initial step, you will receive a Github invitation after a few days. 
 
 ## 2. Join the Team
 
-1. Contact the current project maintainer to identify the GIAM group name necessary for repository access.
+1. Check the config file [repos.yaml](../config/repos.yaml) to search for the project and team name.
 2. Open GIAM and search for the specific group name.
 3. Order the item.
 
