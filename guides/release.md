@@ -2,7 +2,7 @@
 
 The following steps must be taken to release a new open source project:
 
-1. **Register your release**. Complete the [registration form](https://forms.office.com/e/6CWzqV1FYe) to express your intent to release non-product code (such as utility libraries, tools, and sample code).
+1. **Register your release**. Complete the [registration form](https://forms.office.com/e/6CWzqV1FYe) (internal) to express your intent to release non-product code (such as utility libraries, tools, and sample code).
 2. **Get approval**. Obtain business line approval.
 
 3. **Name your project**. 
@@ -40,14 +40,14 @@ in a `NOTICE` file.
      // SPDX-License-Identifier: MIT
      ```
 6. **Publish the code**. 
-     - Once business approval is granted and code is prepared, create an issue in `XXX` repo and request that a new GitHub repository is created.
-     - Create a new Azure security group in GIAM to manage repository access ([details](https://allianzms.sharepoint.com/:u:/r/teams/DE1214-6256295/SitePages/Create-Azure-Security-Group.aspx?csf=1&web=1&share=EfrPwMMX75xNsyVxYMxXFLgBapAXQHGFz9OpuVGTnT0YAw&e=QyKoaB)). The group name is flexible, allowing spaces and capitalized letters. 
+     - Create a GitHub team to manage access to the repository. Details can be found [here](creating_a_team.md).
+     - Modify the configuration file [repos.yaml](../config/repos.yaml) to include the new project. You can either submit a pull request with the changes, or if you prefer, create a ticket outlining your desired modifications, and we will handle the pull request on your behalf.
 7. **Going forward**.
-   - **Staffing**. Ensure at least one team member is committed to managing community interactions merging pull requests, giving feedback, releasing new versions.
-   - **Maintaining**. Make your life easier as an open source maintainer, [from documenting processes to leveraging your community](https://opensource.guide/best-practices/).
-   - **Build welcoming communities**. [Build a community that encourages people](https://opensource.guide/building-community/) to use, contribute to, and share your project.
+   - Ensure at least one team member is committed to managing community interactions merging pull requests, giving feedback, releasing new versions.
+   - Make your life easier as an open source maintainer, [from documenting processes to leveraging your community](https://opensource.guide/best-practices/).
+   - [Build a community that encourages people](https://opensource.guide/building-community/) to use, contribute to, and share your project.
 
 
-## Attribution
+----
 
-This release process is based on the GitHub [release process template](https://github.com/github/github-ospo/blob/main/policies/releasing.md) with some adoptions from the [Yahoo release process](https://yahoo.github.io/oss-guide/docs/publishing/prepare.html)
+This release process is based on the GitHub [release process template](https://github.com/github/github-ospo/blob/main/policies/releasing.md) with some adoptions from the [Yahoo release process](https://yahoo.github.io/oss-guide/docs/publishing/prepare.html). The original text is licensed under CC-BY.
