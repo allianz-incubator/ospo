@@ -44,13 +44,10 @@ At Allianz, we support open source initiatives through this open community. From
 * For general inquiries, please reach out to us via email at [ospo@allianz.com](mailto:ospo@allianz.com).
 * Explore our [Teams Channel](https://xxxxx/) for additional assistance.
 
-## License
-This repo is licensed under MIT for code and CC BY-SA 4.0 for documentation.
+## License and Acknowledgements
+This repository is licensed under MIT for code and CC BY 4.0 for documentation.
 
-
-#### Attribution
-
-This open source project includes content from the following sources:
+Inspiration and content are drawn from the following sources, all licensed under CC BY:
 
 - [GitHub OSPO template](https://github.com/github/github-ospo)
 - [Yahoo OSS guide](https://yahoo.github.io/oss-guide/)
