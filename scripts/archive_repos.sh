@@ -1,6 +1,7 @@
 #!/bin/bash
+cd "$(dirname "$0")"
 
-ISSUE_TITLE="Staleness Warning"
+ISSUE_TITLE="Inactive Repository Reminder"
 ISSUE_TEXT=$(cat <<'EOF'
 Dear Maintainers,
 
