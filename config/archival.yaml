@@ -1,0 +1,5 @@
+# List of repositories to exclude from automatic archiving after stale period
+excluded_repos:
+  - .github
+  - ospo
+  - new-project
