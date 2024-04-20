@@ -1,0 +1,29 @@
+---
+name: Run repolint
+on:
+  workflow_dispatch: null
+  # schedule:
+  # - cron: '*/5 * * * *'
+  #  - cron: '0 0 * * *'
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ secrets.BOT_APP_ID }}
+          private-key: ${{ secrets.BOT_PRIVATE_KEY }}
+
+      - name: Archive Allianz Incubator Repos
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: scripts/archive_repos.sh --org allianz-incubator
+
+      - name: Lint Allianz Repos
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: scripts/archive_repos.sh --org allianz --dry-run

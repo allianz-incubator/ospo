@@ -2,3 +2,4 @@
 excluded_repos:
   - .github
   - ospo
+  - new-project

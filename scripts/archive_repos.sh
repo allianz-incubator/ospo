@@ -1,18 +1,18 @@
 #!/bin/bash
 
+ISSUE_TITLE="Staleness Warning"
 ISSUE_TEXT=$(cat <<'EOF'
 Dear Maintainers,
 
 This repository has been identified as stale due to inactivity. To prevent it from being archived, we kindly request action.
 
 **Action Required:**
-To maintain this repository, we recommend creating an empty commit to demonstrate ongoing activity. This can be achieved by running the following command:
+We recommend creating an empty commit to demonstrate ongoing activity. This can be achieved by running the following command:
 
 ```bash
 git commit --allow-empty -m "Keep repository active"
 ```
 
-Archival Notice:
 If no action is taken within the next 30 days, this repository will be archived.
 
 Request for Unarchival:
@@ -21,6 +21,7 @@ In case the repository is archived and there's a legitimate reason to revive it,
 Thank you for your attention and cooperation.
 
 Best regards,
+
 OSPO Team
 
 EOF
@@ -29,8 +30,12 @@ EOF
 # Read excluded repositories from the config file
 EXCLUDED_REPOSITORIES=$(yq -r '.excluded_repos | .[]' ../config/archival.yaml | sort)
 
-# Calculate the date one year ago
-ONE_YEAR_AGO=$(date -d "1 year ago" +%Y-%m-%dT%H:%M:%SZ)
+# Calculate the dates until archiving
+STALE_PERIOD=$(date -d "1 year ago" +%Y-%m-%dT%H:%M:%SZ)
+GRACE_PERIOD=$(date -d "40 days ago" +%Y-%m-%dT%H:%M:%SZ)
+
+#STALE_PERIOD=$(date -d "1 day ago" +%Y-%m-%dT%H:%M:%SZ)
+#GRACE_PERIOD=$(date -d "3 hours ago" +%Y-%m-%dT%H:%M:%SZ)
 
 # Parse command line parameters
 ORG_NAME=""
@@ -58,6 +63,7 @@ if [ -z "$ORG_NAME" ]; then
     exit 1
 fi
 
+
 # Checks if an issue is open and returns the issue number.
 issue_number() {
   local repo="$1"
@@ -66,16 +72,6 @@ issue_number() {
   gh issue list -R "$repo" --state open --json number,title |  jq -r ".[] | select(.title == \"$issue_title\") | .number"
 }
 
-# Function to fetch the creation date of an issue
-get_issue_creation_date() {
-  local repo="$1"
-  local issue_title="$2"
-  local issue_number=$(issue_number "$repo" "$issue_title")
-
-  if [ -n "$issue_number" ]; then
-    gh issue view -R "$repo" "$issue_number" --json createdAt --jq '.createdAt'
-  fi
-}
 
 # Creates a new GitHub issue or skips the creation if one already exists.
 create_issue_if_not_exists() {
@@ -86,7 +82,7 @@ create_issue_if_not_exists() {
   existing_issue_number=$(issue_number "$repo" "$issue_title")
   if [ -z "$existing_issue_number" ]; then
       if [ "$DRY_RUN" = true ]; then
-        DRY_RUN_MESSAGES+="Dry run: Would create an issue for repository '$repo'.\n"
+        echo "Dry run: Would create an issue for repository '$repo'.\n"
       else
         gh issue create -R "$repo" --title "$issue_title" --body "$issue_body"
       fi
@@ -108,31 +104,51 @@ close_issue() {
   fi
 }
 
+# Archive a repository
+archive_repo() {
+  local repo="$1"
+  
+  if [ "$DRY_RUN" = true ]; then
+    echo "Dry run: Would archive repository '$repo'."
+  else
+    gh repo archive "$repo" -y
+    echo "Archived the repository '$repo'."
+  fi
+}
 
-# Fetch repositories for the organization and remove repos to be excluded
+
+# Calculate the list of repositories to be processed
 repos=$(gh repo list $ORG_NAME --no-archived --json name --jq '.[].name' | sort)
 repos_to_process=$(comm -23 <(echo "$repos") <(echo "$EXCLUDED_REPOSITORIES"))
 
-# Check if the repository has not received a commit for more than a year
+# Iterate over all repositories and create staleness warnings, if needed
+echo "Creating issues..."
 for repo in ${repos_to_process[@]}; do
 
     # Get the last commit date for the repository
     last_commit_date=$(gh repo view $ORG_NAME/$repo --json pushedAt --jq '.pushedAt')
 
     # Check if the repository is stale (no commits in the last year)
-    if [[ "$last_commit_date" < "$ONE_YEAR_AGO" ]]; then
-        echo "Stale repository: $ORG_NAME/$repo"
-        create_issue_if_not_exists "$ORG_NAME/$repo" "Staleness Warning" "$ISSUE_TEXT"
+    if [[ "$last_commit_date" < "$STALE_PERIOD" ]]; then
+        echo "$ORG_NAME/$repo is stale."
+        create_issue_if_not_exists "$ORG_NAME/$repo" "$ISSUE_TITLE" "$ISSUE_TEXT"
     else
-        close_issue "$ORG_NAME/$repo" "Staleness Warning" 
+        close_issue "$ORG_NAME/$repo" "$ISSUE_TITLE" 
     fi
 done
 
-# Check if the stale warning issue is 30 days old and print a message
+# Iterate over all repositories and archive, if needed
+echo "Archiving repos..."
 for repo in ${repos_to_process[@]}; do
-    issue_creation_date=$(get_issue_creation_date "$ORG_NAME/$repo" "Staleness Warning")
-    if [ -n "$issue_creation_date" ] && [[ "$issue_creation_date" < "$THIRTY_DAYS_AGO" ]]; then
-        echo "The Staleness Warning issue for repository $ORG_NAME/$repo is 30 days old."
-        echo "Consider taking appropriate actions."
+    
+    # Check if stale warning issue exists for repository
+    existing_issue_number=$(issue_number "$ORG_NAME/$repo" "$ISSUE_TITLE")
+    if [ -n "$existing_issue_number" ]; then
+        
+        # Check if grace period is passed
+        issue_creation_date=$(gh issue view -R "$ORG_NAME/$repo" $existing_issue_number --json createdAt --jq '.createdAt')
+        if [[ "$issue_creation_date" < "$GRACE_PERIOD" ]]; then
+             archive_repo "$ORG_NAME/$repo"
+        fi
     fi
 done
