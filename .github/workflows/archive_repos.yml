@@ -23,7 +23,7 @@ jobs:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: scripts/archive_repos.sh --org allianz-incubator
 
-      - name: Lint Allianz Repos
+      - name: Archive Allianz Repos
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: scripts/archive_repos.sh --org allianz --dry-run
