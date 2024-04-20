@@ -1,5 +1,5 @@
 ---
-name: Run repolint
+name: Archive repositories
 on:
   workflow_dispatch: null
   # schedule:
