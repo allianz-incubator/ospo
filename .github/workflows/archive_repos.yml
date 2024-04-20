@@ -34,4 +34,4 @@ jobs:
       - name: Archive Allianz Repos
         env:
           GH_TOKEN: ${{ steps.app-token-all.outputs.token }}
-        run: scripts/archive_repos.sh --org allianz --dry-run
+        run: scripts/archive_repos.sh --org allianz
