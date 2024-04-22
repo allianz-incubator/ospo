@@ -51,4 +51,5 @@ Inspiration and content are drawn from the following sources, all licensed under
 
 - [GitHub OSPO template](https://github.com/github/github-ospo)
 - [Yahoo OSS guide](https://yahoo.github.io/oss-guide/)
+- [Google OSPO](https://opensource.google/documentation/reference)
 
