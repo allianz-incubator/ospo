@@ -17,7 +17,6 @@ The following steps must be taken to release a new open source project:
      - Remove comments or documentation references to JIRA links, internal code names, and anything else that wouldn’t make sense to external developers.
      - Remove embarrassing content (curse words, poor coding practices).
      - Remove all embedded credentials, passwords, or other secrets that may be mistakenly added to the code or a configuration file. (Note: we expect secrets to be managed outside of source code, but we ask you to check nonetheless.)
-     - Drop the revision history.
      - Conduct a static code analysis for vulnerabilities.
 
 4. **Prepare code for release**.
@@ -42,6 +41,8 @@ in a `NOTICE` file.
 6. **Publish the code**. 
      - Create a GitHub team to manage access to the repository. Details can be found [here](creating_a_team.md).
      - Modify the configuration file [repos.yaml](../config/repos.yaml) to include the new project. You can either submit a pull request with the changes, or if you prefer, create a ticket outlining your desired modifications, and we will handle the pull request on your behalf.
+     - After the repository has been provisioned, copy the code into the new repository. Do not include the git revision history.
+
 7. **Going forward**.
    - Ensure at least one team member is committed to managing community interactions merging pull requests, giving feedback, releasing new versions.
    - Make your life easier as an open source maintainer, [from documenting processes to leveraging your community](https://opensource.guide/best-practices/).
