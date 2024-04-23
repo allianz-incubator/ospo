@@ -1,12 +1,14 @@
 
-# Allianz Open Source Team
+# Welcome to the Allianz Open Source Team!
 
 
 <!--
 <img src="https://raw.githubusercontent.com/allianz/ospo/main/guides/people-logo.png" align="right" height="400" width="400" >
 -->
 
-At Allianz, we support open source initiatives through this open community. From managing the GitHub organization to providing legal guidance, our commitment is to enhance your open source experience. 
+At Allianz, we are dedicated to fostering open source initiatives within our community. <!--Our Open Source Program Office (OSPO) provides comprehensive support, from managing our GitHub organization to offering legal guidance.--> Our commitment is to enrich your open source journey, ensuring a seamless experience for contributors and users alike.
+
+Explore our guides below to learn more about our processes, standards, and how to engage with our open source projects.
 
 
 ## Guides
