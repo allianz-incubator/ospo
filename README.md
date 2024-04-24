@@ -6,9 +6,10 @@
 <img src="https://raw.githubusercontent.com/allianz/ospo/main/guides/people-logo.png" align="right" height="400" width="400" >
 -->
 
-At Allianz, we are dedicated to fostering open source initiatives within our community. <!--Our Open Source Program Office (OSPO) provides comprehensive support, from managing our GitHub organization to offering legal guidance.--> Our commitment is to enrich your open source journey, ensuring a seamless experience for contributors and users alike.
+Here at Allianz, we're committed to open source.<!-- Our Open Source Program Office (OSPO) is here to provide essential support, managing our GitHub organization and offering legal guidance.--> 
+Our aim is to improve the open source experience, making it smoother for contributors and users.
 
-Explore our guides below to learn more about our processes, standards, and how to engage with our open source projects.
+Take a look at the guides below to explore our processes, standards, and how to engage with our open source projects.
 
 
 ## Guides
