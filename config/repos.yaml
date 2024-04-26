@@ -46,10 +46,3 @@ repositories:
   - name: "test-permissions"
     stage: allianz-incubator
 
-  - name: "playground"
-    stage: allianz-incubator
-    teams:
-    - name: "Allianz OSPO"
-
-  - name: "demo"
-    stage: allianz-incubator
