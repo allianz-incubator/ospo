@@ -2,9 +2,8 @@
 name: Archive repositories
 on:
   workflow_dispatch: null
-  # schedule:
-  # - cron: '*/5 * * * *'
-  #  - cron: '0 0 * * *'
+  schedule:
+    - cron: '0 0 * * 0' # Every Sunday midnight
 jobs:
   run-script:
     runs-on: ubuntu-latest
