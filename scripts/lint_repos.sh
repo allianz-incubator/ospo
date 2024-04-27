@@ -20,6 +20,7 @@ cd "$(dirname "$0")"
 # Static configuration
 GLOBAL_CONFIG_URL="https://raw.githubusercontent.com/allianz/ospo/main/config/policies.yaml"
 OUTPUT_DIR="../results"
+DOCUMENTATION="https://github.com/allianz/ospo/blob/main/guides/standards_and_compliance.md"
 
 # Check setup
 if ! command -v repolinter &> /dev/null || ! command -v gh &> /dev/null; then
@@ -150,7 +151,7 @@ lint_repos() {
       
       # Check the exit code of repolinter
       if [ $? -eq 1 ]; then
-          failure="The repository '$repo' is not compliant with Allianz guidelines. Please review https://developer.portal.allianz/docs/default/component/open-source-guide"
+          failure="The repository '$repo' is not compliant with Allianz guidelines. Please review $DOCUMENTATION"
           report=$(cat "$OUTPUT_DIR/$repo.md")
           create_issue_if_not_exists "$repo" "Repo lint error" "$failure\n\n$report"
       else
