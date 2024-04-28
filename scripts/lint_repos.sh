@@ -122,7 +122,7 @@ download_repo() {
     local repo=$1
 
     # clone repository
-    gh repo clone "$repo" "$CHECKOUT_DIR/$repo" -- -q
+    gh repo clone "$repo" "$CHECKOUT_DIR/$repo" -- -q --depth 1
 
     # Add repo description
     echo "# Settings of the Github repository" > $CHECKOUT_DIR/$repo/GITHUB_SETTINGS
