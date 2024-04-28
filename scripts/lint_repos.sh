@@ -3,7 +3,7 @@
 # Linting all repositories of a Github organization
 #
 # Usage:
-#   ./lint_repos.sh --org <organization_name> [--dry-run]
+#   ./lint_repos.sh --org <organization_name> [--dry-run] [--debug]
 #
 # Parameters:
 #   --org: The name of the organization on GitHub.
@@ -13,14 +13,10 @@
 #   This script retrieves a list of public repositories in the specified GitHub organization
 #   and performs linting using repolinter. For each repository, it creates a directory for the output,
 #   runs repolinter, and checks for compliance. If a repository is non-compliant, it creates or updates
+#   an issue with linting details.compliance. If a repository is non-compliant, it creates or updates
 #   an issue with linting details.
 
 cd "$(dirname "$0")"
-
-# Static configuration
-GLOBAL_CONFIG_URL="https://raw.githubusercontent.com/allianz/ospo/main/config/policies.yaml"
-OUTPUT_DIR="../results"
-DOCUMENTATION="https://github.com/allianz/ospo/blob/main/guides/standards_and_compliance.md"
 
 # Check setup
 if ! command -v repolinter &> /dev/null || ! command -v gh &> /dev/null; then
@@ -28,9 +24,15 @@ if ! command -v repolinter &> /dev/null || ! command -v gh &> /dev/null; then
     exit 1
 fi
 
+# Static configuration
+OUTPUT_DIR="../results"
+CHECKOUT_DIR="../lint_cache"
+DOCUMENTATION="https://github.com/allianz/ospo/blob/main/guides/standards_and_compliance.md"
+
 # Parse command line parameters
 ORG_NAME=""
 DRY_RUN=false
+DEBUG=false
 
 while [ $# -gt 0 ]; do
     case "$1" in
@@ -40,6 +42,9 @@ while [ $# -gt 0 ]; do
             ;;
         --dry-run)
             DRY_RUN=true
+            ;;
+        --debug)
+            DEBUG=true
             ;;
         *)
             echo "Unknown option: $1"
@@ -54,6 +59,15 @@ if [ -z "$ORG_NAME" ]; then
     echo "Please provide the organization name using --org option."
     exit 1
 fi
+
+
+# Helper function to print debug messages
+print_debug() {
+    local message="$1"
+    if [ "$DEBUG" = true ]; then
+        echo "$message"
+    fi
+}
 
 
 # Checks if an issue is open and returns the issue number.
@@ -79,7 +93,7 @@ create_issue_if_not_exists() {
         gh issue create -R "$repo" --title "$issue_title" --body "$issue_body"
       fi
   else
-    echo "An open issue already exists in the repository '$repo'. Skipping creation."
+    echo "An open issue already exists in the repository '$repo'. Nothing to do."
   fi
 }
 
@@ -91,9 +105,37 @@ close_issue() {
   local issue_number=$(issue_number "$repo" "$issue_title")
 
   if [ -n "$issue_number" ]; then
+    echo "Closing the existing issue in the repository '$repo'."
     gh issue close -R "$repo" "$issue_number"
-    echo "Closed the existing issue in the repository '$repo'."
+  else
+    echo "No open issue found. Nothing to do."
   fi
+}
+
+# Clones the specified repository and saves description and topics information to local files
+# 
+# This function clones the specified GitHub repository locally using the GitHub CLI (`gh`).
+# It then retrieves the repository's description and topics and saves them to separate text files
+# within the local repository directory. These local files can be used by repolinter
+# that require local repository content for checking compliance.
+download_repo() {
+    local repo=$1
+
+    # clone repository
+    gh repo clone "$repo" "$CHECKOUT_DIR/$repo" -- -q
+
+    # Add repo description
+    echo "# Settings of the Github repository" > $CHECKOUT_DIR/$repo/GITHUB_SETTINGS
+    description=$(gh repo view $repo --json description -q '.description')
+    if [ ! -z "$description" ]; then
+        echo "description_set" >> $CHECKOUT_DIR/$repo/GITHUB_SETTINGS
+    fi
+
+    # Add repo topics
+    topics=$(gh api repos/$repo/topics | jq -r '.names')
+    if [ "$topics" != "[]" ]; then
+        echo "topics_set" >> $CHECKOUT_DIR/$repo/GITHUB_SETTINGS
+    fi
 }
 
 
@@ -104,7 +146,7 @@ close_issue() {
 #   checks if the repository provides a local configuration file at
 #   "https://raw.githubusercontent.com/<repository>/main/.github/repolinter.yaml." If found,
 #   this local configuration is retrieved. If no local configuration exists, the function falls
-#   back to the global configuration specified by GLOBAL_CONFIG_URL.
+#   back to the global configuration in this repository at ../config/policies.yaml
 #
 #   The purpose of this function is to allow repositories to have custom linting configurations,
 #   providing flexibility for different projects while ensuring a consistent global standard for linting.
@@ -113,10 +155,9 @@ get_repolinter_config() {
   local local_config_url="https://raw.githubusercontent.com/$repo/main/.github/repolinter.yaml"
 
   if [ "$(curl -k -s -o /dev/null -w "%{http_code}" "$local_config_url")" -eq 200 ]; then
-    echo "Repository '$repo' provides a local repolinter configuration."
     curl -k -s "$local_config_url"
   else
-    curl -k -s "$GLOBAL_CONFIG_URL"
+    cat ../config/policies.yaml
   fi
 }
 
@@ -139,22 +180,35 @@ lint_repos() {
   local org_name="$1"
   rm -Rf $OUTPUT_DIR/$org_name
   mkdir -p "$OUTPUT_DIR/$org_name"
+  rm -Rf $CHECKOUT_DIR/$org_name
+  mkdir -p "$CHECKOUT_DIR/$org_name"
 
   # Loop through each repository and perform linting
   local repos=$(gh repo list "$org_name" --visibility public --no-archived -L 100 | awk '{print $1}')
   for repo in $repos; do
       echo
-      echo "Linting the repository '$repo'..."
-          
+      echo 
+      echo "Cloning the repository '$repo'..."
+      download_repo $repo
+       
       # Run repolinter on the repository
-      repolinter -g "https://github.com/$repo" -f markdown -u <(get_repolinter_config "$repo") > "$OUTPUT_DIR/$repo.md"
+      echo "Linting the repository '$repo'..."
+      config=$(get_repolinter_config "$repo")
+      print_debug config
+      repolinter "$CHECKOUT_DIR/$repo" -u <(echo "$config") 
+      repolinter "$CHECKOUT_DIR/$repo" -f markdown -u <(echo "$config") > "$OUTPUT_DIR/$repo.md"  
       
+
       # Check the exit code of repolinter
       if [ $? -eq 1 ]; then
-          failure="The repository '$repo' is not compliant with Allianz guidelines. Please review $DOCUMENTATION"
+          echo
+          echo "The repository is not compliant."
+          failure="Hello there! 👋 Repository '$repo' doesn't meet our standards. Take a look at the [documentation]($DOCUMENTATION) for assistance."
           report=$(cat "$OUTPUT_DIR/$repo.md")
-          create_issue_if_not_exists "$repo" "Repo lint error" "$failure\n\n$report"
+          create_issue_if_not_exists "$repo" "Standards Compliance Notice" "$failure\n\n$report"
       else
+          echo
+          echo "The repository compliant."
           close_issue "$repo" "Repo lint error" 
       fi
   done
