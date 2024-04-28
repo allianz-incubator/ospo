@@ -2,9 +2,8 @@
 name: Run repolint
 on:
   workflow_dispatch: null
-  # schedule:
-  # - cron: '*/5 * * * *'
-  #  - cron: '0 0 * * *'
+  schedule:
+    - cron: '0 0 * * 2,4'
 jobs:
   run-script:
     runs-on: ubuntu-latest
