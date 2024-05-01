@@ -125,16 +125,16 @@ download_repo() {
     gh repo clone "$repo" "$CHECKOUT_DIR/$repo" -- -q --depth 1
 
     # Add repo description
-    echo "# Settings of the Github repository" > $CHECKOUT_DIR/$repo/GITHUB_SETTINGS
+    echo "# Settings of the Github repository" > $CHECKOUT_DIR/$repo/github.com
     description=$(gh repo view $repo --json description -q '.description')
     if [ ! -z "$description" ]; then
-        echo "description_set" >> $CHECKOUT_DIR/$repo/GITHUB_SETTINGS
+        echo "description_set" >> $CHECKOUT_DIR/$repo/github.com
     fi
 
     # Add repo topics
     topics=$(gh api repos/$repo/topics | jq -r '.names')
     if [ "$topics" != "[]" ]; then
-        echo "topics_set" >> $CHECKOUT_DIR/$repo/GITHUB_SETTINGS
+        echo "topics_set" >> $CHECKOUT_DIR/$repo/github.com
     fi
 }
 

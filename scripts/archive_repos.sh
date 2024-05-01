@@ -16,7 +16,7 @@ git commit --allow-empty -m "Keep repository active"
 
 If no action is taken within the next 30 days, this repository will be archived.
 
-Request for Unarchival:
+**Request for Unarchival:**
 In case the repository is archived and there's a legitimate reason to revive it, please contact ospo@allianz.com with your request for unarchiving.
 
 Thank you for your attention and cooperation.

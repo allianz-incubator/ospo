@@ -6,7 +6,7 @@ In order to maintain consistency across our repositories, the following settings
 
 2. **Repository Topics**: Classifying the repository with topics. ([How-to Set](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/classifying-your-repository-with-topics))
 
-3. **License File**: A valid license file outlining the terms and conditions for repository use. ([How-to Add](https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/adding-a-license-to-a-repository))
+3. **License File**: Includes one of the [approved licenses](approved_licenses.md) outlining the terms and conditions for repository use. ([How-to Add](https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/adding-a-license-to-a-repository))
 
 4. **Readme File**: A comprehensive readme file providing essential information about the project, its setup, and usage. ([How-to Create](https://docs.github.com/de/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes))
 
