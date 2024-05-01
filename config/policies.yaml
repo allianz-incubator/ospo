@@ -23,11 +23,14 @@ rules:
         content: topics_set
         human-readable-content: "repository topics in Github settings"    
   
-  license-detectable-by-licensee:
+  license-file-exists:
     level: error
-    where: ["license=MIT","license=Apache-2.0"]
     rule:
-      type: license-detectable-by-licensee 
+      type: file-existence
+      options:
+        globsAny:
+          - "LICENSE*"
+        nocase: true
 
   readme-file-exists:
     level: error
