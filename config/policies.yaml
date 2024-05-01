@@ -2,14 +2,32 @@ version: 2
 axioms:
   licensee: license
 rules:
-  license-file-exists:
+
+  gh-description-set:
     level: error
     rule:
-      type: file-existence
+      type: file-contents
       options:
-        globsAny:
-          - "LICENSE*"
-        nocase: true
+        globsAll:
+          - "github.com"
+        content: description_set
+        human-readable-content: "a repository description in Github settings"
+
+  gh-topics-set:
+    level: error
+    rule:
+      type: file-contents
+      options:
+        globsAll:
+          - "github.com"
+        content: topics_set
+        human-readable-content: "repository topics in Github settings"    
+  
+  license-detectable-by-licensee:
+    level: error
+    where: ["license=MIT","license=Apache-2.0"]
+    rule:
+      type: license-detectable-by-licensee 
 
   readme-file-exists:
     level: error
@@ -31,38 +49,7 @@ rules:
           - "CONTRIB*"
         nocase: true
 
-  readme-references-license:
-    level: error
-    rule:
-      type: file-contents
-      options:
-        globsAll:
-          - "README*"
-        content: license
-        flags: i
 
-  repository-description-set:
-    level: error
-    rule:
-      type: file-contents
-      options:
-        globsAll:
-          - "GITHUB_SETTINGS"
-        content: description_set
-        human-readable-content: "a repository description in Github"
 
-  repository-topics-set:
-    level: error
-    rule:
-      type: file-contents
-      options:
-        globsAll:
-          - "GITHUB_SETTINGS"
-        content: topics_set
-        human-readable-content: "repository topics in Github"       
+   
 
-  license-detectable-by-licensee:
-    level: error
-    where: ["license=*"]
-    rule:
-      type: license-detectable-by-licensee 
