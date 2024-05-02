@@ -21,7 +21,7 @@ Take a look at the guides below to explore our processes, standards, and how to 
 #### 1. Contributing Guidelines
 * [Code of Conduct](https://github.com/allianz/.github/blob/main/CODE_OF_CONDUCT.md)
 * [Code Review Process](guides/code_review_process.md)
-* [DCO](guides/dco.md)
+<!--* [DCO](guides/dco.md)-->
 <!--
 #### 3. Licensing
 * Overview of Open Source Licenses
