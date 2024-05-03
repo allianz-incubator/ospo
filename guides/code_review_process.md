@@ -4,7 +4,7 @@ Git workflows play a crucial role in the code review process. Two notable method
 
 Working with [Github Flow](https://docs.github.com/en/get-started/quickstart/github-flow):
 1. Create an issue, if not existing yet, to discuss what you want to implement
-2. Fork the repository and create your branch from master
+2. Fork the repository and create your branch from main
 3. Push changes to your fork and open a pull request 
     * Fill in the required PR template, if exists
     * Add a summary of all major changes in the description
