@@ -15,4 +15,4 @@ GitHub Code Scanning utilizes the code analysis engine CodeQL. The supported lan
 
 Compiled languages must be built during the analysis process. In many cases, no configuration is required. However, in some cases, a custom configuration might be necessary. In such cases, GitHub will display the error message below and provide guidance through the necessary steps.
 
-![Scanning error](failure.PNG) 
+![Scanning error](failure.PNG)
