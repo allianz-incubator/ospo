@@ -1,4 +1,4 @@
-# Engaging with Allianz Open Source Software 
+# Engaging with Allianz Open Source Software
 
 1. **Explore our Repositories:**
    - Browse through our GitHub repositories to discover the open source projects available. Using our open source software in your own projects is the best way to get involved and contribute to our growing community.
