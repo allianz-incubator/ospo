@@ -40,7 +40,7 @@ The following steps outline the process for creating and releasing an open-sourc
      // SPDX-License-Identifier: MIT
      ```
 6. **Final review:**
-   - Once all activities have been completed and your assigned task is closed, a final review will be conducted by the open-source team.
+   - Once all activities have been completed and your assigned task is closed, a final review will be conducted by the open-source team. If no issues are found, you can proceed with creating the repository.
 
 7. **Create GitHub repository**
    - Create a GitHub team to manage access to the repository. Details can be found [here](creating_a_team.md).
