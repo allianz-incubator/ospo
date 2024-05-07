@@ -39,7 +39,7 @@ The following steps outline the process for creating and releasing an open-sourc
      // SPDX-FileCopyrightText: Allianz and others
      // SPDX-License-Identifier: MIT
      ```
-6. **Final Review:**
+6. **Final review:**
    - Once all activities have been completed and your assigned task is closed, a final review will be conducted by the open-source team.
 
 7. **Create GitHub repository**
