@@ -47,6 +47,11 @@ Take a look at the guides below to explore our processes, standards, and how to 
 * For general inquiries, please reach out to us via email at [ospo@allianz.com](mailto:ospo@allianz.com).
 * Explore our [Teams Channel](https://xxxxx/) for additional assistance.
 
+## Contributing 
+
+You want to help? Great! 🙏
+ * Check out our [contributing documentation](CONTRIBUTING.md)
+
 ## License and Acknowledgements
 This repository is licensed under MIT for code and CC BY 4.0 for documentation.
 
