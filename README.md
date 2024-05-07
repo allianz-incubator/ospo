@@ -49,7 +49,7 @@ Take a look at the guides below to explore our processes, standards, and how to 
 
 ## Contributing 
 
-You want to help? Great! 🙏
+You want to help? Great! 
  * Check out our [contributing documentation](CONTRIBUTING.md)
 
 ## License and Acknowledgements
