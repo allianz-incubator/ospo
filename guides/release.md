@@ -44,7 +44,7 @@ The following steps outline the process for creating and releasing an open-sourc
 
 7. **Publish the code**. 
    - Create a GitHub team to manage access to the repository. Details can be found [here](creating_a_team.md).
-   - Modify the configuration file [repos.yaml](../config/repos.yaml) to include the new project. Please submit a pull request.
+   - Update the [repos.yaml](../config/repos.yaml) configuration file to include the new project and submit a pull request for review
    - After the pull request is merged, the repository will be provisioned automatically.
 
 8. **Going forward**.
