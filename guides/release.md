@@ -1,6 +1,6 @@
 # Launching an Open Source Project 🛳️
 
-The following steps outline the process for creating and releasing an open-source project. Please note that certain points, such as code cleaning, may only be relevant for existing projects undergoing open-sourcing.
+The following steps outline the process for creating and releasing an open-source project. Please note that certain points may only be relevant for existing projects undergoing open-sourcing.
 
 1. **Register your release**. 
    - Fill out the [registration form](https://forms.office.com/e/6CWzqV1FYe) (internal) to express your intention to release non-product code (such as utility libraries, tools, and sample code). After submission, you'll be assigned a task to track the completion of the subsequent steps below.
