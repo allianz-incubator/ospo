@@ -42,12 +42,15 @@ The following steps outline the process for creating and releasing an open-sourc
 6. **Final Review:**
    - Once all activities have been completed and your assigned task is closed, a final review will be conducted by the open-source team.
 
-7. **Publish the code**. 
+7. **Create GitHub repository**
    - Create a GitHub team to manage access to the repository. Details can be found [here](creating_a_team.md).
    - Update the [repos.yaml](../config/repos.yaml) configuration file to include the new project and submit a pull request for review
    - After the pull request is merged, the repository will be provisioned automatically.
 
-8. **Going forward**.
+8. **Publish the code**. 
+   - After the repository has been provisioned, copy the code into the new repository. Do not include the git revision history.
+
+9. **Going forward**.
    - Ensure at least one team member is committed to managing community interactions merging pull requests, giving feedback, releasing new versions.
    - Make your life easier as an open source maintainer, [from documenting processes to leveraging your community](https://opensource.guide/best-practices/).
    - [Build a community that encourages people](https://opensource.guide/building-community/) to use, contribute to, and share your project.
