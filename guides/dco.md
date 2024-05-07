@@ -2,7 +2,7 @@
 
 The Developer Certificate of Origin (DCO) is a mechanism used to confirm that contributors have the legal right to submit their work. It is a simple declaration stating that you have the right to submit your contributions, either because the work is yours or you have the appropriate permissions and are willing to contribute under the project's licensing terms.
 
-```
+```text
 Developer Certificate of Origin
 Version 1.1
 
@@ -47,4 +47,4 @@ To include the DCO sign-off in a Git commit, use the following command:
 git commit -s -m "Your commit message here"
 ```
 
-Adding the `-s` option appends a "Signed-off-by: Joe Doe joe.doe@example.com" line to the end of the commit message, signaling your compliance with the DCO. Ensure your real name is set in the git config `user.name` and a valid email address in `user.email`.
+Adding the `-s` option appends a "Signed-off-by: Joe Doe <joe.doe@example.com>" line to the end of the commit message, signaling your compliance with the DCO. Ensure your real name is set in the git config `user.name` and a valid email address in `user.email`.

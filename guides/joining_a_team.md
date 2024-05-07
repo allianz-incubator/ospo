@@ -1,4 +1,4 @@
-# Joining a Team 
+# Joining a Team
 
 ## 1. Join the Github Organization
 
@@ -17,8 +17,4 @@ After this initial step, you will receive a Github invitation after a few days. 
 
 1. Check the config file [repos.yaml](../config/repos.yaml) to find the team name of the desired project.
 2. Open GIAM and search for the team name.
-3. Order the item. 
-
-
-
-
+3. Order the item.
