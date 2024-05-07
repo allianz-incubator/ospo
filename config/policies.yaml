@@ -25,7 +25,8 @@ rules:
   
   license-detectable-by-licensee:
     level: error
-    where: ["license=MIT","license=Apache-2.0"]
+    where: 
+      - "license=MIT"
     rule:
       type: license-detectable-by-licensee 
 
