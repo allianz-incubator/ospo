@@ -48,7 +48,7 @@ The following steps outline the process for creating and releasing an open-sourc
    - After the pull request is merged, the repository will be provisioned automatically.
 
 8. **Publish the code**. 
-   - After the repository has been provisioned, copy the code into the new repository. Do not include the git revision history.
+   - After the repository has been provisioned, copy the code into the new repository. Do NOT include the git revision history!
 
 9. **Going forward**.
    - Ensure at least one team member is committed to managing community interactions merging pull requests, giving feedback, releasing new versions.
