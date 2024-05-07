@@ -77,7 +77,7 @@ create_repo() {
     if [ "$DRY_RUN" = true ]; then
         DRY_RUN_MESSAGES+="+ Would create repository: $name in $org.\n"
     else
-        gh repo create $org/$name --public"
+        gh repo create $org/$name --public
 
         if [ $? -eq 0 ] && [ "$(echo $response | jq -r '.id')" != "null" ]; then
             echo -e "\e[32m✓\e[0m Repository '$name' successfully created in organization $org."
