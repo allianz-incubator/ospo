@@ -124,18 +124,13 @@ download_repo() {
     # clone repository
     gh repo clone "$repo" "$CHECKOUT_DIR/$repo" -- -q --depth 1
 
-    # Add repo description
-    echo "# Settings of the Github repository" > $CHECKOUT_DIR/$repo/github.com
+    # Retrieve github.com meta data
     description=$(gh repo view $repo --json description -q '.description')
-    if [ ! -z "$description" ]; then
-        echo "description_set" >> $CHECKOUT_DIR/$repo/github.com
-    fi
-
-    # Add repo topics
+    echo "description=\"$description\"" > "$CHECKOUT_DIR/$repo/github.com"
     topics=$(gh api repos/$repo/topics | jq -r '.names')
-    if [ "$topics" != "[]" ]; then
-        echo "topics_set" >> $CHECKOUT_DIR/$repo/github.com
-    fi
+    echo "topics=\"$topics\"" >> "$CHECKOUT_DIR/$repo/github.com"
+    license=$(gh repo view $repo --json licenseInfo -q '.licenseInfo.key')
+    echo "license=\"$license\"" >> "$CHECKOUT_DIR/$repo/github.com"
 }
 
 
