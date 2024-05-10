@@ -10,7 +10,7 @@ rules:
       options:
         globsAll:
           - "github.com"
-        content: description_set
+        content: "description=\"(.+)\""
         human-readable-content: "a repository description in Github settings"
 
   gh-topics-set:
@@ -20,7 +20,7 @@ rules:
       options:
         globsAll:
           - "github.com"
-        content: topics_set
+        content: topics="\s*\[[^\]]*\S[^\]]*\]\s*"
         human-readable-content: "repository topics in Github settings"    
   
   license-file-exists:
