@@ -50,10 +50,12 @@ The following steps outline the process for creating and releasing an open-sourc
 
 8. **Publish the code**. 
    - After the repository has been provisioned, copy the code into the new repository. Do NOT include the git revision history!
+   - Apply Allianz standard settings and include required files in the GitHub repository, as outlined [here](standards_and_compliance.md).
+   - Verify that [Dependabot](dependabot.md) and [GitHub Code Scanner](code_scanning.md) are functioning properly.
 
 9. **Going forward**.
-
    - Ensure at least one team member is committed to managing community interactions merging pull requests, giving feedback, releasing new versions.
+   - Regularly monitor and update your project to maintain its overall health; otherwise, it will be [automatically archived](archiving_a_repository.md) due to inactivity.
    - Make your life easier as an open source maintainer, [from documenting processes to leveraging your community](https://opensource.guide/best-practices/).
    - [Build a community that encourages people](https://opensource.guide/building-community/) to use, contribute to, and share your project.
 
