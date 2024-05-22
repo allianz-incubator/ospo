@@ -14,23 +14,23 @@ jobs:
       - uses: actions/create-github-app-token@v1
         id: app-token-inc
         with:
-          app-id: ${{ secrets.BOT_APP_ID }}
-          private-key: ${{ secrets.BOT_PRIVATE_KEY }}
-          owner: allianz-incubator
-
-      - name: Archive Allianz Incubator Repos
-        env:
-          GH_TOKEN: ${{ steps.app-token-inc.outputs.token }}
-        run: scripts/archive_repos.sh --org allianz-incubator
-
-      - uses: actions/create-github-app-token@v1
-        id: app-token-all
-        with:
-          app-id: ${{ secrets.BOT_APP_ID }}
-          private-key: ${{ secrets.BOT_PRIVATE_KEY }}
+          app-id: ${{ secrets.ALLIANZ_APP_ID }}
+          private-key: ${{ secrets.ALLIANZ_APP_PRIVATE_KEY }}
           owner: allianz
 
       - name: Archive Allianz Repos
         env:
           GH_TOKEN: ${{ steps.app-token-all.outputs.token }}
         run: scripts/archive_repos.sh --org allianz
+
+      - uses: actions/create-github-app-token@v1
+        id: app-token-all
+        with:
+          app-id: ${{ secrets.ALLIANZ_INCUBATOR_APP_ID }}
+          private-key: ${{ secrets.ALLIANZ_INCUBATOR_APP_PRIVATE_KEY }}
+          owner: allianz-incubator
+
+      - name: Archive Allianz Incubator Repos
+        env:
+          GH_TOKEN: ${{ steps.app-token-inc.outputs.token }}
+        run: scripts/archive_repos.sh --org allianz-incubator
