@@ -2,16 +2,16 @@
 #
 # GitHub Management Script
 #
-# Usage: ./create_repos.sh [--apply] [--debug]
+# Usage: ./create_repos.sh --org <organization_name> [--dry-run] [--debug]
 #
 # Parameters:
-#   --apply: Apply changes to GitHub (default is dry-run mode).
-#   --debug: Enable debug mode for additional information.
+#   --org: The name of the organization on GitHub.
+#   --dry-run: Optional flag to simulate script execution without making changes.
 #
 # Description:
 #   This Bash script automates GitHub repository and team management based on a YAML configuration file.
 #   It uses GitHub CLI (gh) and yq for interaction and configuration parsing, respectively.
-#   The script can create, transfer, and synchronize repositories and teams, and it supports dry-run mode.
+#   The script can create and synchronize repositories and teams, and it supports dry-run mode.
 
 cd "$(dirname "$0")"
 IFS=$'\n' # keep whitespace when iterating with for loops
@@ -26,12 +26,18 @@ if ! command -v yq &> /dev/null || ! command -v gh &> /dev/null; then
 fi
 
 # Parse command line parameters
-DRY_RUN=true
+ORG_NAME=""
+DRY_RUN=false
 DEBUG=false
+
 while [ $# -gt 0 ]; do
     case "$1" in
-        --apply)
-            DRY_RUN=false
+        --org)
+            shift
+            ORG_NAME=$1
+            ;;
+        --dry-run)
+            DRY_RUN=true
             ;;
         --debug)
             DEBUG=true
@@ -88,29 +94,6 @@ create_repo() {
 }
 
 
-# Function to transfer a GitHub repository from one organization to another
-transfer_repo() {
-    local name=$1
-
-    if [ "$DRY_RUN" = true ]; then
-        DRY_RUN_MESSAGES+="~ Would transfer repository $name from allianz-incubator to allianz.\n"
-    else
-        local response=$(gh api \
-            --method POST \
-            -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            repos/allianz-incubator/$name/transfer \
-            -f new_owner=allianz)
-
-        if [ $? -eq 0 ] && [ "$(echo $response | jq -r '.id')" != "null"  ]; then
-            echo -e "\e[32m✓\e[0m Repository '$name' successfully transfered to organization allianz."
-        else
-            echo "Error transfering repo '$name' at line $LINENO. $response.">&2; exit 1;
-        fi
-    fi
-}
-
-
 # Function to create a new GitHub team and set up team synchronization
 create_team() {
     local name=$1
@@ -159,7 +142,7 @@ create_team() {
     if [ "$DRY_RUN" = true ]; then
         DRY_RUN_MESSAGES+="+ Would setup team sync: team '$name' with AD Group '$giam_name'.\n"
     else
-        load_teams # Update cache to include new team slug
+        load_teams $org # Update cache to include new team slug
         local slug_name=$(get_team_slug $name) || exit 1
         local response=$(echo $ad_group | gh api \
             --method PATCH   \
@@ -271,13 +254,11 @@ load_repositories() {
 }
 
 
-# Function to load existing teams from GitHub
+# Function to load existing teams from GitHub and cache the result
 load_teams() {
-    CACHED_ALLIANZ_TEAMS=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /orgs/allianz/teams) || {
-        echo "Error fetching teams for allianz at line $LINENO. $CACHED_ALLIANZ_TEAMS."; exit 1; }
-
-    CACHED_ALLIANZ_INCUBATOR_TEAMS=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /orgs/allianz-incubator/teams) || {
-        echo "Error fetching teams for allianz-incubator at line $LINENO. $CACHED_ALLIANZ_INCUBATOR_TEAMS."; exit 1; }
+    local org="$1"
+    CACHED_TEAMS=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /orgs/$org/teams) || {
+        echo "Error fetching teams for allianz at line $LINENO. $CACHED_TEAMS."; exit 1; }
 }
 
 
@@ -297,12 +278,7 @@ load_team_permissions(){
 # Function to get the list of teams for a given organization
 get_teams(){
     local org="$1"
-
-    if [ "$org" == "allianz" ]; then
-        echo "$CACHED_ALLIANZ_TEAMS"
-    else
-        echo "$CACHED_ALLIANZ_INCUBATOR_TEAMS"
-    fi
+    echo "$CACHED_TEAMS"
 }
 
 
@@ -311,14 +287,11 @@ get_team_slug(){
     local name="$1"
 
     # Search for the team in both organizations
-    local slug_allianz=$(jq -r '.[] | select(.name == "'"$name"'") | .slug' <<< "$CACHED_ALLIANZ_TEAMS") || exit 1
-    local slug_incubator=$(jq -r '.[] | select(.name == "'"$name"'") | .slug' <<< "$CACHED_ALLIANZ_INCUBATOR_TEAMS") || exit 1
-
+    local slug=$(jq -r '.[] | select(.name == "'"$name"'") | .slug' <<< "$CACHED_TEAMS") || exit 1
+ 
     # Return the first non-empty slug found
-    if [ -n "$slug_allianz" ]; then
-        echo "$slug_allianz"
-    elif [ -n "$slug_incubator" ]; then
-        echo "$slug_incubator"
+    if [ -n "$slug" ]; then
+        echo "$slug"
     else
         echo "Error: team slug not found for $name" >&2; exit 1
     fi
@@ -334,53 +307,31 @@ get_team_slug(){
 # warnings for inconsistent repository configurations.
 #
 process_repos() {
+    local org="$1"
     echo "READING REPOSITORIES..."
 
     # Status
-    local existing_main_repos=$(load_repositories allianz) || exit 1
-    local existing_incubator_repos=$(load_repositories allianz-incubator) || exit 1
-    local desired_main_repos=$(yq eval '.repositories[] | select(.stage == "allianz") | .name' "$YAML_FILE" | sort -u) || exit 1
-    local desired_incubator_repos=$(yq eval '.repositories[] | select(.stage == "allianz-incubator") | .name' "$YAML_FILE" | sort -u) || exit 1
-
+    local existing_repos=$(load_repositories $org) || exit 1
+    local desired_repos=$(yq eval '.repositories[] | select(.stage == "'"$org"'") | .name' "$YAML_FILE" | sort -u) || exit 1
+    
     ## calculate changes
-    local repos_to_add_in_incubator=$(comm -23 <(echo "$desired_incubator_repos") <(echo "$existing_incubator_repos")) || exit 1
-    local repos_to_add_in_main=$(comm -23 <(comm -23 <(echo "$desired_main_repos") <(echo "$existing_main_repos")) <(echo "$existing_incubator_repos")) || exit 1
-    local repos_to_transfer_to_main=$(comm -12 <(comm -23 <(echo "$desired_main_repos") <(echo "$existing_main_repos")) <(echo "$existing_incubator_repos")) || exit 1
-   
+    local repos_to_add=$(comm -23 <(echo "$desired_repos") <(echo "$existing_repos")) || exit 1
+    
     # Debug
     print_debug
     print_debug "Existing Repositories in allianz:"
-    print_debug "$existing_main_repos" | sed 's/^/  /'
+    print_debug "$existing_repos" | sed 's/^/  /'
     print_debug
     print_debug "Desired Repositories in allianz:"
-    print_debug "$desired_main_repos" | sed 's/^/  /'
+    print_debug "$desired_repos" | sed 's/^/  /'
     print_debug
     print_debug "Repositories to Add in allianz:"
-    print_debug "$repos_to_add_in_main" | sed 's/^/  /'
+    print_debug "$repos_to_add" | sed 's/^/  /'
     print_debug
-    print_debug "Repositories to Transfer to allianz:"
-    print_debug "$repos_to_transfer_to_main" | sed 's/^/  /'
-    print_debug
-    print_debug "Existing Repositories in allianz-incubator:"
-    print_debug "$existing_incubator_repos" | sed 's/^/  /'
-    print_debug
-    print_debug "Desired Repositories in allianz-incubator:"
-    print_debug "$desired_incubator_repos" | sed 's/^/  /'
-    print_debug
-    print_debug "Repositories to Add in allianz-incubator:"
-    print_debug "$repos_to_add_in_incubator" | sed 's/^/  /'
-    print_debug
-
 
     # Iterate over changes
-    for repo in $repos_to_add_in_incubator; do
-        create_repo $repo "allianz-incubator"
-    done
-    for repo in $repos_to_add_in_main; do
-        create_repo $repo "allianz"
-    done
-    for repo in $repos_to_transfer_to_main; do
-        transfer_repo $repo
+    for repo in $repos_to_add; do
+        create_repo $repo $org
     done
 }
 
@@ -478,10 +429,9 @@ process_teams() {
 
 # Run
 validate_yaml
-process_repos
-load_teams
-process_teams allianz
-process_teams allianz-incubator
+process_repos $ORG_NAME
+load_teams $ORG_NAME
+process_teams $ORG_NAME
 
 # Print warnings
 if [ -n "$warning_messages" ]; then

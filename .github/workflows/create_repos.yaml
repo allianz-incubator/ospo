@@ -1,0 +1,68 @@
+---
+name: Run create repos
+on:
+  workflow_dispatch: null
+
+jobs:
+  dry-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: actions/create-github-app-token@v1
+        id: app-token-all
+        with:
+          app-id: ${{ secrets.ALLIANZ_APP_ID }}
+          private-key: ${{ secrets.ALLIANZ_APP_PRIVATE_KEY }}
+          owner: allianz
+
+      - name: Plan github organization changes in allianz
+        env:
+          GH_TOKEN: ${{ steps.app-token-all.outputs.token }}
+        run: scripts/create_repos.sh --org allianz --dry-run
+
+      - uses: actions/create-github-app-token@v1
+        id: app-token-inc
+        with:
+            app-id: ${{ secrets.ALLIANZ_INCUBATOR_APP_ID }}
+            private-key: ${{ secrets.ALLIANZ_INCUBATOR_APP_PRIVATE_KEY }}
+            owner: allianz-incubator
+  
+      - name: Plan github organization changes in allianz-incubator
+        env:
+            GH_TOKEN: ${{ steps.app-token-inc.outputs.token }}
+        run: scripts/create_repos.sh --org allianz-incubator --dry-run
+
+
+  apply:
+    needs: dry-run
+    environment: github.com
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - uses: actions/create-github-app-token@v1
+      id: app-token-all
+      with:
+          app-id: ${{ secrets.ALLIANZ_APP_ID }}
+          private-key: ${{ secrets.ALLIANZ_APP_PRIVATE_KEY }}
+          owner: allianz
+
+    - name: Create repositories and teams in allianz
+      env:
+          GH_TOKEN: ${{ steps.app-token-all.outputs.token }}
+      run: scripts/create_repos.sh --org allianz 
+
+    - uses: actions/create-github-app-token@v1
+      id: app-token-inc
+      with:
+          app-id: ${{ secrets.ALLIANZ_INCUBATOR_APP_ID }}
+          private-key: ${{ secrets.ALLIANZ_INCUBATOR_APP_PRIVATE_KEY }}
+          owner: allianz-incubator
+
+    - name: Create repositories and teams in allianz-incubator
+      env:
+          GH_TOKEN: ${{ steps.app-token-inc.outputs.token }}
+      run: scripts/create_repos.sh --org allianz-incubator

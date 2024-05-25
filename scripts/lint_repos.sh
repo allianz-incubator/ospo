@@ -28,6 +28,7 @@ fi
 OUTPUT_DIR="../results"
 CHECKOUT_DIR="../lint_cache"
 DOCUMENTATION="https://github.com/allianz/ospo/blob/main/guides/standards_and_compliance.md"
+ISSUE_TITLE="Standards Compliance Notice"
 
 # Parse command line parameters
 ORG_NAME=""
@@ -105,12 +106,16 @@ close_issue() {
   local issue_number=$(issue_number "$repo" "$issue_title")
 
   if [ -n "$issue_number" ]; then
-    echo "Closing the existing issue in the repository '$repo'."
-    gh issue close -R "$repo" "$issue_number"
-  else
-    echo "No open issue found. Nothing to do."
+    if [ "$DRY_RUN" = true ]; then
+      DRY_RUN_MESSAGES+="Dry run: Would close the existing issue in the repository '$repo'."
+    else
+      gh issue close -R "$repo" "$issue_number"
+      echo "Closed the existing issue in the repository '$repo'."
+    fi
   fi
 }
+
+
 
 # Clones the specified repository and saves description and topics information to local files
 # 
@@ -200,11 +205,11 @@ lint_repos() {
           echo "The repository is not compliant."
           failure="Hello there! 👋 Repository '$repo' doesn't meet our standards. Take a look at the [documentation]($DOCUMENTATION) for assistance."
           report=$(cat "$OUTPUT_DIR/$repo.md")
-          create_issue_if_not_exists "$repo" "Standards Compliance Notice" "$failure\n\n$report"
+          create_issue_if_not_exists "$repo" "$ISSUE_TITLE" "$failure\n\n$report"
       else
           echo
-          echo "The repository compliant."
-          close_issue "$repo" "Repo lint error" 
+          echo "The repository is compliant."
+          close_issue "$repo" "$ISSUE_TITLE" 
       fi
   done
 }

@@ -164,5 +164,5 @@ done
 
 # Print dry run results
 if [ "$DRY_RUN" = true ]; then
-    echo -e "\nPlanned changes:\n$DRY_RUN_MESSAGES" 
+    echo -e "\nFindings:\n$DRY_RUN_MESSAGES" 
 fi
