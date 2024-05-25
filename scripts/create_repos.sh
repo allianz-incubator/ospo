@@ -107,7 +107,7 @@ create_team() {
         -F q="$giam_name" /orgs/$org/team-sync/groups)
  
     if [ $? -eq 0 ] && [ "$(echo "$ad_groups" | jq -e '.groups')" == "null" ]; then
-        echo "Error reading AD groups for name '$giam_name' at line $LINENO. $ad_groups.">&2; exit 1;
+        echo "Error reading AD groups for name '$giam_name' in org $org at line $LINENO. $ad_groups.">&2; exit 1;
     fi
 
     # Remove all prefix name matches and keep only exact matches
@@ -244,7 +244,7 @@ load_repositories() {
     local org=$1
 
     local repos=$(gh repo list $org --json name --limit 1000 )|| {
-        echo "Error fetching repos for allianz at line $LINENO. $repos." >&2; exit 1; }
+        echo "Error fetching repos for $org at line $LINENO. $repos." >&2; exit 1; }
 
     if [ "$repos" = "[]" ]; then
         echo "No repositories found for $org (line $LINENO)." >&2; exit 1
@@ -258,7 +258,7 @@ load_repositories() {
 load_teams() {
     local org="$1"
     CACHED_TEAMS=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /orgs/$org/teams) || {
-        echo "Error fetching teams for allianz at line $LINENO. $CACHED_TEAMS."; exit 1; }
+        echo "Error fetching teams for $org at line $LINENO. $CACHED_TEAMS."; exit 1; }
 }
 
 
@@ -301,7 +301,7 @@ get_team_slug(){
 # Function to process repositories based on the YAML configuration
 #
 # This function reads the YAML configuration file to determine the desired state of GitHub repositories
-# for both the 'allianz' and 'allianz-incubator' organizations. It then compares this desired state with
+# for the given organization. It then compares this desired state with
 # the existing repositories on GitHub and performs the necessary actions to align them.
 # Actions include creating new repositories, transferring repositories between organizations, and printing
 # warnings for inconsistent repository configurations.
@@ -319,13 +319,13 @@ process_repos() {
     
     # Debug
     print_debug
-    print_debug "Existing Repositories in allianz:"
+    print_debug "Existing Repositories in $org:"
     print_debug "$existing_repos" | sed 's/^/  /'
     print_debug
-    print_debug "Desired Repositories in allianz:"
+    print_debug "Desired Repositories in $org:"
     print_debug "$desired_repos" | sed 's/^/  /'
     print_debug
-    print_debug "Repositories to Add in allianz:"
+    print_debug "Repositories to Add in $org:"
     print_debug "$repos_to_add" | sed 's/^/  /'
     print_debug
 
@@ -337,7 +337,7 @@ process_repos() {
 
 # Function to process teams based on the YAML configuration and existing teams
 # 
-# This function manages GitHub teams for either the 'allianz' and 'allianz-incubator' organizations,
+# This function manages GitHub teams for the given organizations,
 # aligning them with the desired state specified in the YAML configuration file.
 # It reads the configuration to determine the desired teams, their associated repositories,
 # and the necessary actions to synchronize them with the existing teams on GitHub.
