@@ -49,3 +49,8 @@ repositories:
   - name: "opso-test"
     stage: allianz-incubator
 
+  - name: "test-permissions"
+    stage: allianz-incubator
+    teams:
+    - name: "Allianz OSPO"
+
