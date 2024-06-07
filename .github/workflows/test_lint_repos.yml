@@ -29,6 +29,7 @@ jobs:
         with:
           app-id: ${{ secrets.SANDBOX_APP_ID }}
           private-key: ${{ secrets.SANDBOX_PRIVATE_KEY }}
+          owner: ospo-sandbox 
 
       - name: Lint Allianz Repos
         env:
