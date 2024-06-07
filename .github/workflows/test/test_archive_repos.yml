@@ -1,5 +1,5 @@
 ---
-name: Archive repositories
+name: Test archive repositories
 on:
   workflow_dispatch: null
   # schedule:
@@ -14,11 +14,11 @@ jobs:
       - uses: actions/create-github-app-token@v1
         id: app-token
         with:
-          app-id: ${{ secrets.ALLIANZ_APP_ID }}
-          private-key: ${{ secrets.ALLIANZ_PRIVATE_KEY }}
-          owner: allianz
+          app-id: ${{ secrets.SANDBOX_APP_ID }}
+          private-key: ${{ secrets.SANDBOX_PRIVATE_KEY }}
+          owner: ospo-sandbox 
 
-      - name: Archive Allianz Repos
+      - name: Archive Repos
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
-        run: scripts/archive_repos.sh --org allianz
+        run: scripts/archive_repos.sh --org ospo-sandbox --config ../.github/workflows/test/archival.yaml --dry-run  --debug

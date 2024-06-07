@@ -1,10 +1,9 @@
 # List of repositories to exclude from automatic archiving after stale period
 excluded_repos:
-  - .github
-  - ospo
-
+  - new-project
+ 
 # Time period to consider a repository as stale (e.g., "2 years ago")
-stale_period: "2 years ago"
+stale_period: "1 day ago"
 
 # Grace period after issuing a stale warning (e.g., "40 days ago")
-grace_period: "40 days ago"
+grace_period: "1 day ago"

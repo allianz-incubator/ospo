@@ -16,25 +16,35 @@
 cd "$(dirname "$0")"
 IFS=$'\n' # keep whitespace when iterating with for loops
 
-# Static configuration
-YAML_FILE="../config/repos.yaml"
-
 # Install yq and gh (if not already installed)
 if ! command -v yq &> /dev/null || ! command -v gh &> /dev/null; then
     echo "yq and gh are required. Please install them before running the script."
     exit 1
 fi
 
+# Helper function to print debug messages
+print_debug() {
+    local message="$1"
+    if [ "$DEBUG" = true ]; then
+        echo "$message"
+    fi
+}
+
+
 # Parse command line parameters
 ORG_NAME=""
+CONFIG_FILE_PATH="../config/repos.yaml"
 DRY_RUN=false
 DEBUG=false
-
 while [ $# -gt 0 ]; do
     case "$1" in
         --org)
             shift
             ORG_NAME=$1
+            ;;
+        --config)
+            shift
+            CONFIG_FILE_PATH=$1
             ;;
         --dry-run)
             DRY_RUN=true
@@ -51,25 +61,11 @@ while [ $# -gt 0 ]; do
 done
 
 
-# Helper function to print debug messages
-print_debug() {
-    local message="$1"
-    if [ "$DEBUG" = true ]; then
-        echo "$message"
-    fi
-}
-
-
 # Function to validate the structure of the YAML configuration
 validate_yaml() {
-    for repo_name in $(yq eval '.repositories[].name' "$YAML_FILE"); do
+    for repo_name in $(yq eval '.repositories[].name' "$CONFIG_FILE_PATH"); do
         if [[ ! "$repo_name" =~ ^[a-z0-9.-]+$ ]]; then
             echo "Invalid repository name: '$repo_name'. The name must match the pattern ^[a-z0-9.-]+$.">&2; exit 1
-        fi
-    done
-    for stage in $(yq eval '.repositories[].stage' "$YAML_FILE"); do
-        if [[ "$stage" != "allianz" && "$stage" != "allianz-incubator" ]]; then
-            echo "Invalid stage: $stage. Only allianz and allianz-incubator allowed.">&2; exit 1
         fi
     done
 }
@@ -312,7 +308,7 @@ process_repos() {
 
     # Status
     local existing_repos=$(load_repositories $org) || exit 1
-    local desired_repos=$(yq eval '.repositories[] | select(.stage == "'"$org"'") | .name' "$YAML_FILE" | sort -u) || exit 1
+    local desired_repos=$(yq eval '.repositories[] | select(.org == "'"$org"'") | .name' "$CONFIG_FILE_PATH" | sort -u) || exit 1
     
     ## calculate changes
     local repos_to_add=$(comm -23 <(echo "$desired_repos") <(echo "$existing_repos")) || exit 1
@@ -353,7 +349,7 @@ process_teams() {
     
     # Status
     local existing_teams=$(get_teams $org_name | jq -r '.[].name' | sort) || exit 1
-    local desired_teams=$(yq eval '.repositories[] | select(.stage == "'"$org_name"'") | .teams[].name' "$YAML_FILE" | sort -u) || exit 1
+    local desired_teams=$(yq eval '.repositories[] | select(.org == "'"$org_name"'") | .teams[].name' "$CONFIG_FILE_PATH" | sort -u) || exit 1
 
     # Calculate changes
     local teams_to_add=$(comm -23 <(echo "$desired_teams") <(echo "$existing_teams")) || exit 1
@@ -374,7 +370,7 @@ process_teams() {
     for team in $teams_to_add; do
     
         # Status
-        local desired_repos_for_team=$(yq eval '.repositories[] | select(.teams[].name == "'"$team"'" and .stage == "'"$org_name"'") | .name' "$YAML_FILE" | sort -u) || exit 1
+        local desired_repos_for_team=$(yq eval '.repositories[] | select(.teams[].name == "'"$team"'" and .org == "'"$org_name"'") | .name' "$CONFIG_FILE_PATH" | sort -u) || exit 1
 
         # Debug
         print_debug "  $team"
@@ -393,7 +389,7 @@ process_teams() {
 
         # Status
         local existing_repos_for_team=$(load_team_permissions $org_name $team | sort) || exit 1
-        local desired_repos_for_team=$(yq eval '.repositories[] | select(.teams[].name == "'"$team"'" and .stage == "'"$org_name"'") | .name' ../config/repos.yaml | sort -u) || exit 1
+        local desired_repos_for_team=$(yq eval '.repositories[] | select(.teams[].name == "'"$team"'" and .org == "'"$org_name"'") | .name' ../config/repos.yaml | sort -u) || exit 1
         
         # Debug
         print_debug "  $team"

@@ -24,6 +24,16 @@ if ! command -v repolinter &> /dev/null || ! command -v gh &> /dev/null; then
     exit 1
 fi
 
+
+# Helper function to print debug messages
+print_debug() {
+    local message="$1"
+    if [ "$DEBUG" = true ]; then
+        echo "$message"
+    fi
+}
+
+
 # Static configuration
 OUTPUT_DIR="../results"
 CHECKOUT_DIR="../lint_cache"
@@ -32,14 +42,18 @@ ISSUE_TITLE="Standards Compliance Notice"
 
 # Parse command line parameters
 ORG_NAME=""
+CONFIG_FILE_PATH="../config/policies.yaml"
 DRY_RUN=false
 DEBUG=false
-
 while [ $# -gt 0 ]; do
     case "$1" in
         --org)
             shift
             ORG_NAME=$1
+            ;;
+        --config)
+            shift
+            CONFIG_FILE_PATH=$1
             ;;
         --dry-run)
             DRY_RUN=true
@@ -62,13 +76,6 @@ if [ -z "$ORG_NAME" ]; then
 fi
 
 
-# Helper function to print debug messages
-print_debug() {
-    local message="$1"
-    if [ "$DEBUG" = true ]; then
-        echo "$message"
-    fi
-}
 
 
 # Checks if an issue is open and returns the issue number.
@@ -157,7 +164,7 @@ get_repolinter_config() {
   if [ "$(curl -k -s -o /dev/null -w "%{http_code}" "$local_config_url")" -eq 200 ]; then
     curl -k -s "$local_config_url"
   else
-    cat ../config/policies.yaml
+    cat $CONFIG_FILE_PATH
   fi
 }
 

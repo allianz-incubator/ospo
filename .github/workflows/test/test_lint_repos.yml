@@ -1,5 +1,5 @@
 ---
-name: Run repolint
+name: Test run repolint
 on:
   workflow_dispatch: null
   # schedule:
@@ -27,18 +27,13 @@ jobs:
       - uses: actions/create-github-app-token@v1
         id: app-token
         with:
-          app-id: ${{ secrets.ALLIANZ_APP_ID }}
-          private-key: ${{ secrets.ALLIANZ_APP_PRIVATE_KEY }}
-
-      - name: Lint Allianz Incubator Repos
-        env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
-        run: scripts/lint_repos.sh --org allianz-incubator
+          app-id: ${{ secrets.SANDBOX_APP_ID }}
+          private-key: ${{ secrets.SANDBOX_PRIVATE_KEY }}
 
       - name: Lint Allianz Repos
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
-        run: scripts/lint_repos.sh --org allianz 
+        run: scripts/lint_repos.sh --org ospo-sandbox --config ../.github/workflows/test/policies.yaml --dry-run  --debug
 
       - uses: actions/upload-artifact@v4
         with:
