@@ -26,27 +26,34 @@ OSPO Team
 EOF
 )
 
-# Read excluded repositories from the config file
-EXCLUDED_REPOSITORIES=$(yq -r '.excluded_repos | .[]' ../config/archival.yaml | sort)
-
-# Calculate the dates until archiving
-STALE_PERIOD=$(date -d "2 year ago" +%Y-%m-%dT%H:%M:%SZ)
-GRACE_PERIOD=$(date -d "40 days ago" +%Y-%m-%dT%H:%M:%SZ)
-
-#STALE_PERIOD=$(date -d "1 day ago" +%Y-%m-%dT%H:%M:%SZ)
-#GRACE_PERIOD=$(date -d "3 hours ago" +%Y-%m-%dT%H:%M:%SZ)
+# Helper function to print debug messages
+print_debug() {
+    local message="$1"
+    if [ "$DEBUG" = true ]; then
+        echo -e "$message"
+    fi
+}
 
 # Parse command line parameters
 ORG_NAME=""
+CONFIG_FILE_PATH="../config/archival.yaml"
 DRY_RUN=false
+DEBUG=false
 while [ $# -gt 0 ]; do
     case "$1" in
         --org)
             shift
             ORG_NAME=$1
             ;;
+        --config)
+            shift
+            CONFIG_FILE_PATH=$1
+            ;;
         --dry-run)
             DRY_RUN=true
+            ;;
+        --debug)
+            DEBUG=true
             ;;
         *)
             echo "Unknown option: $1"
@@ -56,6 +63,17 @@ while [ $# -gt 0 ]; do
     shift
 done
 
+
+# Read configuration from the config file
+EXCLUDED_REPOSITORIES=$(yq -r '.excluded_repos | .[]' "$CONFIG_FILE_PATH" | sort)
+STALE_PERIOD_CONFIG=$(yq -r '.stale_period' "$CONFIG_FILE_PATH")
+GRACE_PERIOD_CONFIG=$(yq -r '.grace_period' "$CONFIG_FILE_PATH")
+
+# Calculate the dates until archiving
+STALE_PERIOD=$(date -d "$STALE_PERIOD_CONFIG" +%Y-%m-%dT%H:%M:%SZ)
+GRACE_PERIOD=$(date -d "$GRACE_PERIOD_CONFIG" +%Y-%m-%dT%H:%M:%SZ)
+print_debug "Stale period date: $STALE_PERIOD"
+print_debug "Grace period date: $GRACE_PERIOD"
 
 # Check if organization name is provided
 if [ -z "$ORG_NAME" ]; then
@@ -125,9 +143,10 @@ archive_repo() {
 # Calculate the list of repositories to be processed
 repos=$(gh repo list $ORG_NAME --no-archived --json name --jq '.[].name' | sort)
 repos_to_process=$(comm -23 <(echo "$repos") <(echo "$EXCLUDED_REPOSITORIES"))
+print_debug "Repos found: \n$repos_to_process\n"
 
 # Iterate over all repositories and create staleness warnings, if needed
-echo "Checking..."
+echo "READING REPOSITORIES..."
 for repo in ${repos_to_process[@]}; do
 
     # Get the last commit date for the repository
@@ -144,7 +163,7 @@ done
 
 # Iterate over all repositories and archive, if needed
 echo
-echo "Archiving..."
+echo "READING REPOSITORIES..."
 for repo in ${repos_to_process[@]}; do
     
     # Check if stale warning issue exists for repository
@@ -164,5 +183,5 @@ done
 
 # Print dry run results
 if [ "$DRY_RUN" = true ]; then
-    echo -e "\nFindings:\n$DRY_RUN_MESSAGES" 
+    echo -e "\nPlanned changes:\n$DRY_RUN_MESSAGES" 
 fi

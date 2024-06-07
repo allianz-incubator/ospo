@@ -1,5 +1,5 @@
 ---
-name: Run create repos
+name: Test run create repos
 on:
   workflow_dispatch: null
 
@@ -15,12 +15,12 @@ jobs:
         with:
           app-id: ${{ secrets.ALLIANZ_APP_ID }}
           private-key: ${{ secrets.ALLIANZ_PRIVATE_KEY }}
-          owner: allianz
+          owner: ospo-sandbox 
 
-      - name: Plan github organization changes in allianz
+      - name: Plan github organization changes 
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
-        run: scripts/create_repos.sh --org allianz --dry-run
+        run: scripts/create_repos.sh --org ospo-sandbox  --dry-run
 
 
   apply:
@@ -34,11 +34,11 @@ jobs:
     - uses: actions/create-github-app-token@v1
       id: app-token-all
       with:
-          app-id: ${{ secrets.ALLIANZ_APP_ID }}
-          private-key: ${{ secrets.ALLIANZ_APP_PRIVATE_KEY }}
-          owner: allianz
+          app-id: ${{ secrets.SANDBOX_APP_ID }}
+          private-key: ${{ secrets.SANDBOX_PRIVATE_KEY }}
+          owner: ospo-sandbox 
 
-    - name: Create repositories and teams in allianz
+    - name: Create repositories and teams 
       env:
           GH_TOKEN: ${{ steps.app-token-all.outputs.token }}
-      run: scripts/create_repos.sh --org allianz 
+      run: scripts/create_repos.sh --org ospo-sandbox --config ../.github/workflows/test/repos.yaml --dry-run --debug
