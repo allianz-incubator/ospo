@@ -1,4 +1,5 @@
 # Launching an Open Source Project 🛳️
+![Page Status](https://img.shields.io/badge/status-under_development-orange)
 
 The following steps outline the process for creating and releasing an open-source project. Please note that certain points may only be relevant for existing projects undergoing open-sourcing.
 

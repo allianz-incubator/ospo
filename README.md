@@ -1,6 +1,5 @@
 
 # Welcome to the Allianz Open Source Team
-![Project Status](https://img.shields.io/badge/status-under_development-orange)
 
 <!--
 <img src="https://raw.githubusercontent.com/allianz/ospo/main/guides/people-logo.png" align="right" height="400" width="400" >
@@ -8,8 +7,6 @@
 
 Here at Allianz, we're committed to open source.<!-- Our Open Source Program Office (OSPO) is here to provide essential support, managing our GitHub organization and offering legal guidance.-->
 Our aim is to improve the open source experience, making it smoother for contributors and users.
-
-**This project is currently under development and is intended for testing and feedback purposes only.**
 
 Take a look at the guides below to explore our processes, standards, and how to engage with our open source projects.
 
@@ -33,8 +30,8 @@ Take a look at the guides below to explore our processes, standards, and how to 
 
 * [Creating a Repository](guides/release.md)
 * [Standards and Compliance](guides/standards_and_compliance.md)
-* [Graduation from Incubator](guides/graduation_from_incubator.md)
 * [Archiving a Repository](guides/archiving_a_repository.md)
+<!--* [Graduation from Incubator](guides/graduation_from_incubator.md)-->
 
 ### 3. Team Management
 
