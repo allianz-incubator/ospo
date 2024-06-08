@@ -389,7 +389,7 @@ process_teams() {
 
         # Status
         local existing_repos_for_team=$(load_team_permissions $org_name $team | sort) || exit 1
-        local desired_repos_for_team=$(yq eval '.repositories[] | select(.teams[].name == "'"$team"'" and .org == "'"$org_name"'") | .name' ../config/repos.yaml | sort -u) || exit 1
+        local desired_repos_for_team=$(yq eval '.repositories[] | select(.teams[].name == "'"$team"'" and .org == "'"$org_name"'") | .name' "$CONFIG_FILE_PATH" | sort -u) || exit 1
         
         # Debug
         print_debug "  $team"

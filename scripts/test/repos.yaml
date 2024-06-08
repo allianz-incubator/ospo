@@ -11,9 +11,6 @@ repositories:
   - name: "new-project"
     org:  ospo-sandbox
 
-  - name: "test-permissions"
-    org: ospo-sandbox
-
   - name: "opso-test"
     org: ospo-sandbox
 
@@ -21,4 +18,3 @@ repositories:
     org:  "ospo-sandbox"
     teams:
     - name: "Allianz OSPO"
-
