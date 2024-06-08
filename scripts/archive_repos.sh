@@ -99,14 +99,30 @@ create_issue_if_not_exists() {
 
   existing_issue_number=$(issue_number "$repo" "$issue_title")
   if [ -z "$existing_issue_number" ]; then
+      print_debug "No warning issue found."
       if [ "$DRY_RUN" = true ]; then
         DRY_RUN_MESSAGES+="Dry run: Would create an issue for repository '$repo'.\n"
       else
         gh issue create -R "$repo" --title "$issue_title" --body "$issue_body"
+        echo
       fi
   else
-    echo "A '$issue_title' issue already exists in the repository '$repo'. Skipping creation."
+    print_debug "A '$issue_title' issue already exists in the repository '$repo'. Skipping creation."
   fi
+}
+
+
+# Function to get issue creation date for a given title
+get_issue_creation_date() {
+    local repo="$1"
+    local issue_title="$2"
+
+    issue_number=$(gh issue list -R "$repo" --state open --json number,title,createdAt | jq -r ".[] | select(.title == \"$issue_title\") | .number")
+    if [ -n "$issue_number" ]; then
+        gh issue view -R "$repo" "$issue_number" --json createdAt --jq '.createdAt'
+    else
+        date -u +%Y-%m-%dT%H:%M:%SZ # issue was not created due to dry-run. Pretend issue creation
+    fi
 }
 
 
@@ -132,7 +148,7 @@ archive_repo() {
   local repo="$1"
   
   if [ "$DRY_RUN" = true ]; then
-    DRY_RUN_MESSAGES+="Dry run: Would archive repository '$repo'."
+    DRY_RUN_MESSAGES+="Dry run: Would archive repository '$repo'.\n"
   else
     gh repo archive "$repo" -y
     echo "Archived the repository '$repo'."
@@ -148,7 +164,6 @@ print_debug "Repos found: \n$repos_to_process\n"
 # Iterate over all repositories and create staleness warnings, if needed
 echo "READING REPOSITORIES..."
 for repo in ${repos_to_process[@]}; do
-
     # Get the last commit date for the repository
     last_commit_date=$(gh repo view $ORG_NAME/$repo --json pushedAt --jq '.pushedAt')
 
@@ -156,28 +171,18 @@ for repo in ${repos_to_process[@]}; do
     if [[ "$last_commit_date" < "$STALE_PERIOD" ]]; then
         echo "$ORG_NAME/$repo is stale."
         create_issue_if_not_exists "$ORG_NAME/$repo" "$ISSUE_TITLE" "$ISSUE_TEXT"
-    else
-        close_issue "$ORG_NAME/$repo" "$ISSUE_TITLE" 
-    fi
-done
 
-# Iterate over all repositories and archive, if needed
-echo
-echo "READING REPOSITORIES..."
-for repo in ${repos_to_process[@]}; do
-    
-    # Check if stale warning issue exists for repository
-    existing_issue_number=$(issue_number "$ORG_NAME/$repo" "$ISSUE_TITLE")
-    if [ -n "$existing_issue_number" ]; then
-        
-        # Check if grace period is passed
-        issue_creation_date=$(gh issue view -R "$ORG_NAME/$repo" $existing_issue_number --json createdAt --jq '.createdAt')
+        # Check if grace period is passed for existing issue
+        issue_creation_date=$(get_issue_creation_date "$ORG_NAME/$repo" "$ISSUE_TITLE")
         if [[ "$issue_creation_date" < "$GRACE_PERIOD" ]]; then
             archive_repo "$ORG_NAME/$repo"
         else
-            echo "Users still have time to react on on warning issue for $ORG_NAME/$repo. Skipping repository archiving."
+            echo "$ORG_NAME/$repo has remaining grace period."
         fi
+    else
+        close_issue "$ORG_NAME/$repo" "$ISSUE_TITLE"
     fi
+    echo
 done
 
 
