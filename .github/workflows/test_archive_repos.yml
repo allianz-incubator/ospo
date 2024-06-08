@@ -21,4 +21,4 @@ jobs:
       - name: Archive Repos
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
-        run: scripts/archive_repos.sh --org ospo-sandbox --config ../.github/workflows/test/archival.yaml --dry-run  --debug
+        run: scripts/archive_repos.sh --org ospo-sandbox --config ./test/archival.yaml --dry-run 

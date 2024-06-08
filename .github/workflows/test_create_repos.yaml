@@ -41,4 +41,4 @@ jobs:
     - name: Create repositories and teams 
       env:
           GH_TOKEN: ${{ steps.app-token-all.outputs.token }}
-      run: scripts/create_repos.sh --org ospo-sandbox --config ../.github/workflows/test/repos.yaml --dry-run --debug
+      run: scripts/create_repos.sh --org ospo-sandbox --config ./test/repos.yaml --dry-run
