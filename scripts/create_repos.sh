@@ -2,11 +2,14 @@
 #
 # GitHub Management Script
 #
-# Usage: ./create_repos.sh --org <organization_name> [--dry-run] [--debug]
+# Usage: ./create_repos.sh --org <organization_name> [--dry-run] [--debug] [--skip-team-sync]
 #
 # Parameters:
 #   --org: The name of the organization on GitHub.
 #   --dry-run: Optional flag to simulate script execution without making changes.
+#   --debug: Optional flag to enable debug messages.
+#   --skip-team-sync: Optional flag to skip the setup of team synchronization with Azure AD.
+#
 #
 # Description:
 #   This Bash script automates GitHub repository and team management based on a YAML configuration file.
@@ -36,6 +39,7 @@ ORG_NAME=""
 CONFIG_FILE_PATH="../config/repos.yaml"
 DRY_RUN=false
 DEBUG=false
+SKIP_TEAM_SYNC=false
 while [ $# -gt 0 ]; do
     case "$1" in
         --org)
@@ -51,6 +55,9 @@ while [ $# -gt 0 ]; do
             ;;
         --debug)
             DEBUG=true
+            ;;
+        --skip-team-sync)
+            SKIP_TEAM_SYNC=true
             ;;
         *)
             echo "Unknown option: $1"
@@ -89,31 +96,10 @@ create_repo() {
     fi
 }
 
-
-# Function to create a new GitHub team and set up team synchronization
+# Function to create a new GitHub team
 create_team() {
     local name=$1
     local org=$2
-    local giam_name=$name
-
-    # Get Azure AD group required for team sync
-    local ad_groups=$(gh api -XGET \
-        -H "Accept: application/vnd.github+json" \
-        -H "X-GitHub-Api-Version: 2022-11-28" \
-        -F q="$giam_name" /orgs/$org/team-sync/groups)
- 
-    if [ $? -eq 0 ] && [ "$(echo "$ad_groups" | jq -e '.groups')" == "null" ]; then
-        echo "Error reading AD groups for name '$giam_name' in org $org at line $LINENO. $ad_groups.">&2; exit 1;
-    fi
-
-    # Remove all prefix name matches and keep only exact matches
-    local ad_group=$(echo "$ad_groups" | jq --arg exact_match "$giam_name" '.groups |= map(select(.group_name == $exact_match))')
-    if [ "$(echo "$ad_group" | jq -r '.groups | length')" -eq 0 ]; then
-        echo "Error: No AD group with name '$giam_name' found.">&2; exit 1;
-    fi
-    if [ "$(echo "$ad_group" | jq -r '.groups | length')" -ne 1 ]; then
-        echo "Error: More than one AD group with name '$giam_name' found.">&2; exit 1;
-    fi
 
     # Create the team
     if [ "$DRY_RUN" = true ]; then
@@ -130,8 +116,35 @@ create_team() {
         if [ $? -eq 0 ] && [ "$(echo $response | jq -r '.id')" != "null" ]; then
             echo -e "\e[32m✓\e[0m Team '$name' created successfully in organization '$org'."
         else
-            echo "Error creating team '$name' at line $LINENO. $response.">&2; exit 1;
+            echo "Error creating team '$name' at line $LINENO. $response." >&2; exit 1;
         fi
+    fi
+}
+
+
+# Function to set up team synchronization with Azure AD
+set_team_sync() {
+    local name=$1
+    local org=$2
+    local giam_name=$name
+
+    # Get Azure AD group required for team sync
+    local ad_groups=$(gh api -XGET \
+        -H "Accept: application/vnd.github+json" \
+        -H "X-GitHub-Api-Version: 2022-11-28" \
+        -F q="$giam_name" /orgs/$org/team-sync/groups)
+ 
+    if [ $? -eq 0 ] && [ "$(echo "$ad_groups" | jq -e '.groups')" == "null" ]; then
+        echo "Error reading AD groups for name '$giam_name' in org $org at line $LINENO. $ad_groups." >&2; exit 1;
+    fi
+
+    # Remove all prefix name matches and keep only exact matches
+    local ad_group=$(echo "$ad_groups" | jq --arg exact_match "$giam_name" '.groups |= map(select(.group_name == $exact_match))')
+    if [ "$(echo "$ad_group" | jq -r '.groups | length')" -eq 0 ]; then
+        echo "Error: No AD group with name '$giam_name' found." >&2; exit 1;
+    fi
+    if [ "$(echo "$ad_group" | jq -r '.groups | length')" -ne 1 ]; then
+        echo "Error: More than one AD group with name '$giam_name' found." >&2; exit 1;
     fi
 
     # Activate Azure AD team sync by assigning the AD group to the team
@@ -141,7 +154,7 @@ create_team() {
         load_teams $org # Update cache to include new team slug
         local slug_name=$(get_team_slug $name) || exit 1
         local response=$(echo $ad_group | gh api \
-            --method PATCH   \
+            --method PATCH \
             -H "Accept: application/vnd.github+json" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             /orgs/$org/teams/$slug_name/team-sync/group-mappings \
@@ -150,7 +163,7 @@ create_team() {
         if [ $? -eq 0 ] && [ $(echo "$response" | jq '.groups | length') -ge 1 ]; then
             echo -e "\e[32m✓\e[0m Team '$name' successfully syncing with AD Group '$giam_name'."
         else
-            echo "Error when enabling team sync of '$slug_name' with AD '$giam_name' at line $LINENO. $response.">&2; exit 1;
+            echo "Error when enabling team sync of '$slug_name' with AD '$giam_name' at line $LINENO. $response." >&2; exit 1;
         fi
     fi
 }
@@ -379,6 +392,9 @@ process_teams() {
 
         # Apply
         create_team "$team" $org_name
+        if [ "$SKIP_TEAM_SYNC" = false ]; then
+            set_team_sync $team_name $org
+        fi
         grant_permissions "$team" $org_name $desired_repos_for_team
     done
     print_debug
