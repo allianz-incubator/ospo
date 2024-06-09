@@ -1,5 +1,5 @@
 
-# Welcome to the Allianz Open Source Team
+# Welcome to Allianz Open Source
 
 <!--
 <img src="https://raw.githubusercontent.com/allianz/ospo/main/guides/people-logo.png" align="right" height="400" width="400" >
