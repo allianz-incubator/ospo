@@ -2,13 +2,14 @@
 #
 # GitHub Management Script
 #
-# Usage: ./create_repos.sh --org <organization_name> [--dry-run] [--debug] [--skip-team-sync]
+# Usage: ./create_repos.sh --org <organization_name> [--dry-run] [--debug] [--skip-team-sync] [--skip-custom-role]
 #
 # Parameters:
 #   --org: The name of the organization on GitHub.
 #   --dry-run: Optional flag to simulate script execution without making changes.
 #   --debug: Optional flag to enable debug messages.
-#   --skip-team-sync: Optional flag to skip the setup of team synchronization with Azure AD.
+#   --skip-team-sync: Optional flag to skip the setup of team synchronization with Azure AD. Only available in Github Enterprise.
+#   --skip-custom-role: Optional flag to skip the usage of custom roles. Only available in Github Enterprise.
 #
 #
 # Description:
@@ -40,6 +41,7 @@ CONFIG_FILE_PATH="../config/repos.yaml"
 DRY_RUN=false
 DEBUG=false
 SKIP_TEAM_SYNC=false
+PERMISSION="own"
 while [ $# -gt 0 ]; do
     case "$1" in
         --org)
@@ -58,6 +60,9 @@ while [ $# -gt 0 ]; do
             ;;
         --skip-team-sync)
             SKIP_TEAM_SYNC=true
+            ;;
+        --skip-custom-role)
+            PERMISSION="maintain"
             ;;
         *)
             echo "Unknown option: $1"
@@ -119,6 +124,7 @@ create_team() {
             echo "Error creating team '$name' at line $LINENO. $response." >&2; exit 1;
         fi
     fi
+    load_teams $org # Update cache to include new team slug
 }
 
 
@@ -151,7 +157,6 @@ set_team_sync() {
     if [ "$DRY_RUN" = true ]; then
         DRY_RUN_MESSAGES+="+ Would setup team sync: team '$name' with AD Group '$giam_name'.\n"
     else
-        load_teams $org # Update cache to include new team slug
         local slug_name=$(get_team_slug $name) || exit 1
         local response=$(echo $ad_group | gh api \
             --method PATCH \
@@ -201,7 +206,7 @@ grant_permissions() {
 
     for repo in $repos_to_assign; do
         if [ "$DRY_RUN" = true ]; then
-            DRY_RUN_MESSAGES+="+ Would grant owner permission: team '$name' in $org/$repo.\n"
+            DRY_RUN_MESSAGES+="+ Would grant $PERMISSION permission: team '$name' in $org/$repo.\n"
         else
             local slug_name=$(get_team_slug $name) || exit 1
             local response=$(gh api \
@@ -209,15 +214,17 @@ grant_permissions() {
                 -H "Accept: application/vnd.github+json" \
                 -H "X-GitHub-Api-Version: 2022-11-28" \
                 /orgs/$org/teams/$slug_name/repos/$org/$repo \
-                -f permission='Own')
+                -f permission="$PERMISSION")
 
             if [ $? -eq 0 ] && [ -z "$response" ]; then
-                echo -e "\e[32m✓\e[0m Team '$name' granted owner prermissions in repository '$repo'."
+                echo -e "\e[32m✓\e[0m Team '$name' granted $PERMISSION permission to repository '$repo'."
             else
-                echo "Error granting permissions for team '$slug_name' to repo '$repo' at line $LINENO. $response">&2; exit 1;
+                echo "Error granting $PERMISSION permission to team '$name' for repo '$repo' at line $LINENO. $response." >&2; exit 1;
             fi
         fi
     done
+
+    
 }
 
 
@@ -229,7 +236,7 @@ revoke_permissions() {
 
     for repo in $repos_to_remove; do
         if [ "$DRY_RUN" = true ]; then
-            DRY_RUN_MESSAGES+="- Would remove owner permission: team '$name' in $org/$repo.\n"
+            DRY_RUN_MESSAGES+="- Would remove owner $PERMISSION: team '$name' in $org/$repo.\n"
         else
             local slug_name=$(get_team_slug $name)
             local response=$(gh api \
@@ -239,7 +246,7 @@ revoke_permissions() {
                 /orgs/$org/teams/$slug_name/repos/$org/$repo)
 
             if [ $? -eq 0 ] && [ -z "$response" ]; then
-                echo -e "\e[32m✓\e[0m Team '$name' removed owner prermissions in repository '$repo'."
+                echo -e "\e[32m✓\e[0m Team '$name' removed $PERMISSION prermissions in repository '$repo'."
             else
                 echo "Error removing permissions of team '$slug_name' from repo '$repo' at line $LINENO. $repsonse">&2; exit 1;
             fi

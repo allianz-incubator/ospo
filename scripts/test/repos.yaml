@@ -18,3 +18,8 @@ repositories:
     org:  "ospo-sandbox"
     teams:
     - name: "Allianz OSPO"
+
+  - name: "test-test"
+    org:  "test-user-org"
+    teams:
+    - name: "Allianz OSPO"

@@ -34,3 +34,12 @@ Example:
 ```bash
  ./scripts/lint_repos.sh --org my-test-org --debug --dry-run
 ```
+
+## Testing
+
+If you want to run the script in your own test organization, you might need to deactivate some features only available in GitHub Enterprise.
+
+Example:
+```bash
+ ./create_repos.sh --org test-user-org --config ./test/repos.yaml --skip-team-sync --skip-custom-role  --dry-run
+```
