@@ -19,6 +19,7 @@ Take a look at the guides below to explore our processes, standards, and how to 
 ### 1. Contributing Guidelines
 
 * [Code of Conduct](https://github.com/allianz/.github/blob/main/CODE_OF_CONDUCT.md)
+* [Cloning a Repository](guides/cloning_a_repository.md)
 * [Code Review Process](guides/code_review_process.md)
 <!--* [DCO](guides/dco.md)-->
 <!--
@@ -28,10 +29,9 @@ Take a look at the guides below to explore our processes, standards, and how to 
 -->
 ### 2. Repository Lifecycle
 
-* [Creating a Repository](guides/release.md)
+<!--* [Creating a Repository](guides/release.md)-->
 * [Standards and Compliance](guides/standards_and_compliance.md)
 * [Archiving a Repository](guides/archiving_a_repository.md)
-<!--* [Graduation from Incubator](guides/graduation_from_incubator.md)-->
 
 ### 3. Team Management
 
