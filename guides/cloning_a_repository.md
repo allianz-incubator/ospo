@@ -17,7 +17,7 @@ This guide provides two methods: using a fine-grained token manually or using th
 ### Instructions:
 
 1. **Authenticate GitHub CLI:**
-    - Authenticate `gh` with your GitHub account:
+    - Authenticate gh with your GitHub account:
         ```sh
         gh auth login
         ```
@@ -28,7 +28,7 @@ This guide provides two methods: using a fine-grained token manually or using th
         ```sh
         gh repo list allianz
         ```
-    - Clone a repository using `gh`:
+    - Clone a repository using gh:
         ```sh
         gh repo clone allianz/<repository>
         ```
@@ -55,14 +55,14 @@ This guide provides two methods: using a fine-grained token manually or using th
 
 1. **Create a Fine-Grained Personal Access Token:**
     - Go to your GitHub account settings.
-    - Navigate to `Settings` > `Developer settings` > `Personal access tokens` > `Fine-grained tokens`.
+    - Navigate to Settings > Developer settings > Personal access tokens > Fine-grained tokens.
     - Click on `Generate new token`.
     - Provide a name and set an expiration date for the token.
-    - Under `Resource owner`, select Allianz.
+    - Under *Resource owner*, select Allianz.
     - Select `Only select repositories` and choose the repositories you want to access.
     - Grant the following repository permissions:
-        - `Contents`: `Read and write`
-        - `Metadata`: `Read`
+        - Contents: `Read and write`
+        - Metadata: `Read`
     - Click `Generate token`.
     - Copy and save the token securely.
 
