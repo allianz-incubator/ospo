@@ -1,14 +1,14 @@
 # Launching an Open Source Project 🛳️
 ![Page Status](https://img.shields.io/badge/status-under_development-orange)
 
-The following steps outline the process for creating and releasing an open-source project. Please note that certain points may only be relevant for existing projects undergoing open-sourcing.
+The following steps outline the process for creating and releasing an open-source project. Please note that this process is not finalized, yet.
 
-1. **Register your release**. 
-   - Fill out the [registration form](https://forms.office.com/e/6CWzqV1FYe) (internal) to express your intention to release non-product code (such as utility libraries, tools, and sample code). After submission, you'll be assigned a task to track the completion of the subsequent steps below.
-
-2. **Get approval**. 
+1. **Get approval**. 
    - Seek approval from the relevant business line and forward the approval via email to ospo@allianz.com.
 
+2. **Register your release**. 
+   - Fill out the [registration form](https://forms.office.com/e/6CWzqV1FYe) (internal) to express your intention to release non-product code (such as utility libraries, tools, and sample code).
+     
 3. **Name your project**.
    - Check that it does not conflict with an existing project or infringe on any [trademarks](https://www.trademarkia.com/).
    - Don’t use a Allianz brand name.
@@ -42,10 +42,10 @@ The following steps outline the process for creating and releasing an open-sourc
      ```
      
 6. **Final review:**
-   - Once all activities have been completed and your assigned task is closed, a final review will be conducted by the open-source team. If no issues are found, you can proceed with creating the repository.
+   - Once all activities have been completed and your assigned task is closed, a final review will be conducted. If no issues are found, you can proceed with creating the repository.
 
 7. **Create GitHub repository**
-   - Create a GitHub team to manage access to the repository. Details can be found [here](creating_a_team.md).
+   - Create a GIAM group to manage access to the repository. Details can be found [here](creating_a_team.md).
    - Update the [repos.yaml](../config/repos.yaml) configuration file to include the new project and submit a pull request for review
    - After the pull request is merged, the repository will be provisioned automatically.
 
