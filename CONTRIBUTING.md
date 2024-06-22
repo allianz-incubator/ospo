@@ -32,7 +32,7 @@ The main scripts and associated files are:
 Example:
 
 ```bash
- ./scripts/lint_repos.sh --org my-test-org --debug --dry-run
+ ./lint_repos.sh --org allianz --dry-run
 ```
 
 ## Testing
@@ -41,5 +41,5 @@ If you want to run the script in your own test organization, you might need to d
 
 Example:
 ```bash
- ./create_repos.sh --org test-user-org --config ./test/repos.yaml --skip-team-sync --skip-custom-role  --dry-run
+ ./create_repos.sh --org ospo-sandbox --config ./test/repos.yaml --skip-team-sync --skip-custom-role --debug --dry-run
 ```
