@@ -19,8 +19,8 @@ Take a look at the guides below to explore our processes, standards, and how to 
 ### 1. Contributing Guidelines
 
 * [Code of Conduct](https://github.com/allianz/.github/blob/main/CODE_OF_CONDUCT.md)
-* [Cloning a Repository](guides/cloning_a_repository.md)
-* [Code Review Process](guides/code_review_process.md)
+* [Cloning a Repository](https://github.com/allianz/ospo/wiki/Cloning-Repositories-from-the-Allianz-GitHub-Organization)
+* [Code Review Process](https://github.com/allianz/ospo/wiki/Code-Review-Process)
 <!--* [DCO](guides/dco.md)-->
 <!--
 #### 3. Licensing
@@ -30,20 +30,20 @@ Take a look at the guides below to explore our processes, standards, and how to 
 ### 2. Repository Lifecycle
 
 <!--* [Creating a Repository](guides/release.md)-->
-* [Standards and Compliance](guides/standards_and_compliance.md)
-* [Archiving a Repository](guides/archiving_a_repository.md)
+* [Standards and Compliance](https://github.com/allianz/ospo/wiki/Standards-and-Compliance)
+* [Archiving a Repository](https://github.com/allianz/ospo/wiki/Archiving-a-Repository)
 
 ### 3. Team Management
 
-* [Joining a Team](guides/joining_a_team.md)
-* [Creating a Team](guides/creating_a_team.md)
+* [Joining a Team](https://github.com/allianz/ospo/wiki/Joining-a-Team)
+* [Creating a Team](https://github.com/allianz/ospo/wiki/Creating-a-Team)
 
 ### 4. Security
 
 * [Vulnerability Reporting](https://github.com/allianz/.github/blob/main/SECURITY.md)
-* [Dependabot](guides/dependabot.md)
-* [Code Scanning](guides/code_scanning.md)
-* [Secret Scanning](guides/secret_scanning.md)
+* [Dependabot](https://github.com/allianz/ospo/wiki/Dependabot)
+* [Code Scanning](https://github.com/allianz/ospo/wiki/Code-Scanning)
+* [Secret Scanning](https://github.com/allianz/ospo/wiki/Secret-Scanning)
 
 ## Contact
 
