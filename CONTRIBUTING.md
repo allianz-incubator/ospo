@@ -15,6 +15,7 @@ Reach out on our collaboration channels if you need assistance.
 The following tools are required by our scripts:
 
 * [yq](https://github.com/mikefarah/yq)
+* jq
 * [gh](https://cli.github.com/)
 * [repolinter](https://github.com/todogroup/repolinter)
 
