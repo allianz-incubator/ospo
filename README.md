@@ -48,7 +48,7 @@ Take a look at the guides below to explore our processes, standards, and how to 
 ## Contact
 
 * For general inquiries, please reach out to us via email at [ospo@allianz.com](mailto:ospo@allianz.com).
-* Explore our [Teams Channel](https://teams.microsoft.com/l/channel/19%3aQpiaHrO7z-nPrFPFNeaaBgA6oiXxO3ycXLYMdIgLW4s1%40thread.tacv2/Allgemein?groupId=7355caf6-c35d-49b8-90ab-51b5d7215159&tenantId=6e06e42d-6925-47c6-b9e7-9581c7ca302a) (internal) for additional assistance.
+* Explore our [Teams Channel](https://teams.microsoft.com/l/channel/19%3A4c5d8ef68e484a82bf3a80b73ed8c5ae%40thread.tacv2/OSPO?groupId=03328808-70b1-499c-8f61-29447febed23&tenantId=6e06e42d-6925-47c6-b9e7-9581c7ca302a) (internal) for additional assistance.
 
 ## Contributing 
 
