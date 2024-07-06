@@ -19,7 +19,7 @@ Take a look at the guides below to explore our processes, standards, and how to 
 ### 1. Contributing Guidelines
 
 * [Code of Conduct](https://github.com/allianz/.github/blob/main/CODE_OF_CONDUCT.md)
-* [Cloning a Repository](https://github.com/allianz/ospo/wiki/Cloning-Repositories-from-the-Allianz-GitHub-Organization)
+* [Accessing Github with CLI](https://github.com/allianz/ospo/wiki/Accessing-Github)
 * [Code Review Process](https://github.com/allianz/ospo/wiki/Code-Review-Process)
 <!--* [DCO](guides/dco.md)-->
 <!--
